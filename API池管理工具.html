@@ -958,13 +958,56 @@
       }).join('');
     }
     
-    // 复制到剪贴板
+    // 改进的复制功能，支持移动端
     function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        showMessage('已复制到剪贴板', 'success');
-      }).catch(err => {
-        showMessage('复制失败', 'error');
-      });
+      // 优先使用现代 Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showMessage('✅ 已复制到剪贴板', 'success');
+        }).catch(err => {
+          // 如果现代API失败，尝试传统方法
+          fallbackCopy(text);
+        });
+        return;
+      }
+      
+      // 使用传统方法（兼容移动端）
+      fallbackCopy(text);
+    }
+    
+    function fallbackCopy(text) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      textArea.style.top = '0';
+      document.body.appendChild(textArea);
+      
+      // 移动端需要特殊处理
+      if (navigator.userAgent.match(/ipad|iphone/i)) {
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+      }
+      
+      try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (successful) {
+          showMessage('✅ 已复制到剪贴板', 'success');
+        } else {
+          showMessage('❌ 复制失败，请手动复制', 'error');
+        }
+      } catch (err) {
+        document.body.removeChild(textArea);
+        showMessage('❌ 复制失败，请手动复制', 'error');
+        console.error('复制失败:', err);
+      }
     }
     
     // 格式化日期

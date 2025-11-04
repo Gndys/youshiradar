@@ -560,45 +560,69 @@
     
     // 初始化加载
     window.onload = async function() {
-      await initDB();
-      
-      // 加载API池
-      await loadApiPool();
-      
-      // 如果API池为空，自动添加默认API
-      await initDefaultApi();
-      
-      // 初始化API状态显示
-      updateApiStatus();
-      
-      // 加载标签组列表
-      await loadTagGroupsToSelect();
-      
-      // 初始化搜索模式为批量模式
-      switchSearchMode('batch');
-      
-      // 监听批量搜索输入框变化
-      const batchInput = document.getElementById('batchSearchQuery');
-      if (batchInput) {
-        batchInput.addEventListener('input', updateTagCount);
-        updateTagCount();
-      }
-      
-      // 尝试恢复上次查询结果
-      const cacheLoaded = await loadSearchCache();
-      
-      // 提示用户
-      if (!cacheLoaded) {
+      try {
+        console.log('🚀 开始初始化应用...');
+        
+        // 初始化数据库
+        await initDB();
+        console.log('✅ 数据库初始化完成');
+        
+        // 加载API池
+        await loadApiPool();
+        console.log(`📦 API池加载完成，当前数量: ${API_POOL.length}`);
+        
+        // 如果API池为空，自动添加默认API
         if (API_POOL.length === 0) {
-          showMessage(
-            '⚠️ 当前没有可用的API Key！\n' +
-            '请使用"API池管理工具.html"添加API Key',
-            'warning',
-            8000
-          );
-        } else {
-          console.log(`✅ 已加载 ${API_POOL.length} 个可用API`);
+          console.log('⚠️ API池为空，尝试添加默认API...');
+          await initDefaultApi();
         }
+        
+        // 初始化API状态显示
+        updateApiStatus();
+        console.log('✅ API状态更新完成');
+        
+        // 加载标签组列表
+        await loadTagGroupsToSelect();
+        
+        // 初始化搜索模式为批量模式
+        switchSearchMode('batch');
+        
+        // 监听批量搜索输入框变化
+        const batchInput = document.getElementById('batchSearchQuery');
+        if (batchInput) {
+          batchInput.addEventListener('input', updateTagCount);
+          updateTagCount();
+        }
+        
+        // 尝试恢复上次查询结果
+        const cacheLoaded = await loadSearchCache();
+        
+        // 提示用户
+        if (!cacheLoaded) {
+          if (API_POOL.length === 0) {
+            showMessage(
+              '⚠️ 当前没有可用的API Key！\n' +
+              '请点击"API管理"按钮添加API Key，或者刷新页面重试',
+              'warning',
+              10000
+            );
+          } else {
+            console.log(`✅ 已加载 ${API_POOL.length} 个可用API`);
+            // 移动端友好提示
+            if (window.innerWidth <= 768) {
+              showMessage('✅ 初始化完成，可以开始使用', 'success', 3000);
+            }
+          }
+        }
+        
+        console.log('🎉 应用初始化完成！');
+      } catch (error) {
+        console.error('❌ 初始化失败:', error);
+        showMessage(
+          '⚠️ 初始化失败: ' + error.message + '\n请刷新页面重试',
+          'error',
+          10000
+        );
       }
     };
     
@@ -1613,27 +1637,72 @@
       showMessage(`已获取 ${channels.length} 个博主链接`, 'success');
     }
     
+    // 改进的复制功能，支持移动端
+    function copyToClipboard(text) {
+      // 优先使用现代 Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      
+      // Fallback: 使用传统方法（兼容移动端）
+      return new Promise((resolve, reject) => {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        textArea.style.top = '0';
+        document.body.appendChild(textArea);
+        
+        // 移动端需要特殊处理
+        if (navigator.userAgent.match(/ipad|iphone/i)) {
+          const range = document.createRange();
+          range.selectNodeContents(textArea);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          textArea.setSelectionRange(0, 999999);
+        } else {
+          textArea.select();
+        }
+        
+        try {
+          const successful = document.execCommand('copy');
+          document.body.removeChild(textArea);
+          if (successful) {
+            resolve();
+          } else {
+            reject(new Error('复制命令执行失败'));
+          }
+        } catch (err) {
+          document.body.removeChild(textArea);
+          reject(err);
+        }
+      });
+    }
+    
     function copyLink(url) {
-      navigator.clipboard.writeText(url).then(() => {
-        showMessage('链接已复制', 'success');
+      copyToClipboard(url).then(() => {
+        showMessage('✅ 链接已复制', 'success');
       }).catch(err => {
-        showMessage('复制失败: ' + err.message, 'error');
+        console.error('复制失败:', err);
+        showMessage('❌ 复制失败，请手动复制', 'error');
       });
     }
     
     function copyAllLinks() {
       const linkItems = document.querySelectorAll('.channel-link-url');
       if (linkItems.length === 0) {
-        showMessage('没有可复制的链接', 'error');
+        showMessage('❌ 没有可复制的链接', 'error');
         return;
       }
       
       const allLinks = Array.from(linkItems).map(item => item.textContent).join('\n');
       
-      navigator.clipboard.writeText(allLinks).then(() => {
-        showMessage(`已复制 ${linkItems.length} 个链接`, 'success');
+      copyToClipboard(allLinks).then(() => {
+        showMessage(`✅ 已复制 ${linkItems.length} 个链接`, 'success');
       }).catch(err => {
-        showMessage('复制失败: ' + err.message, 'error');
+        console.error('复制失败:', err);
+        showMessage('❌ 复制失败，请手动复制', 'error');
       });
     }
     

@@ -1431,9 +1431,14 @@ td a:hover {
 @media (max-width: 768px) {
   body {
     padding: var(--space-2);
+    font-size: 13px;
   }
 
   /* 移动端导航 */
+  .top-nav {
+    position: relative;
+  }
+
   .top-nav .nav-menu {
     display: none;
     position: absolute;
@@ -1443,10 +1448,23 @@ td a:hover {
     background: var(--p5-black-panel);
     border-bottom: var(--p5-border);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
   }
 
   .top-nav .nav-menu.show {
     display: block;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .top-nav .nav-menu ul {
@@ -1499,12 +1517,22 @@ td a:hover {
 
   .button-group,
   .selection-actions {
-    flex-direction: column;
+    gap: var(--space-2);
   }
 
   .button-group .btn,
   .selection-actions .btn {
-    width: 100%;
+    flex: 1 1 calc(50% - var(--space-2));
+    min-width: 140px;
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  /* 主要按钮保持全宽 */
+  .button-group .btn-analyze,
+  .button-group .btn-primary:first-child {
+    flex: 1 1 100%;
+    min-width: 100%;
   }
 
   .video-grid {
@@ -1517,8 +1545,60 @@ td a:hover {
   }
   
   .btn {
+    font-size: 13px;
+    min-height: 44px; /* 触摸友好的最小尺寸 */
+    padding: 10px 16px;
+  }
+
+  /* 移动端输入框优化 */
+  input, select, textarea {
+    font-size: 16px !important; /* 防止iOS自动缩放 */
+  }
+
+  /* 选择工具栏移动端优化 */
+  .selection-toolbar {
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .selection-info {
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .selection-actions {
+    width: 100%;
+  }
+
+  /* 卡片间距优化 */
+  .card {
+    margin-bottom: var(--space-3);
+  }
+
+  /* 视频卡片优化 */
+  .video-card {
+    padding: var(--space-3);
+  }
+
+  .video-card h4 {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .video-info {
     font-size: 12px;
-    padding: 6px 12px;
+  }
+
+  /* 频道链接区域优化 */
+  .channel-links-header {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: stretch;
+  }
+
+  .channel-links-header .btn {
+    width: 100%;
   }
 }
 

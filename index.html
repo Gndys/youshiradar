@@ -250,6 +250,51 @@
       color: var(--color-text-primary);
       font-size: 1.5rem;
       cursor: pointer;
+      padding: 8px;
+      transition: all var(--transition-fast);
+    }
+
+    .navbar-toggle:hover {
+      color: var(--color-primary);
+    }
+
+    /* 移动端菜单展开状态 */
+    .navbar-menu.mobile-active {
+      display: flex !important;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: rgba(10, 14, 26, 0.98);
+      backdrop-filter: blur(20px);
+      padding: var(--spacing-md) 0;
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow-lg);
+      gap: 0;
+      z-index: 999;
+    }
+
+    .navbar-menu.mobile-active li {
+      width: 100%;
+      text-align: center;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .navbar-menu.mobile-active li:last-child {
+      border-bottom: none;
+    }
+
+    .navbar-menu.mobile-active .navbar-link {
+      display: block;
+      padding: var(--spacing-sm);
+    }
+
+    .navbar-menu.mobile-active .navbar-cta {
+      margin: var(--spacing-sm) var(--spacing-md);
+      width: calc(100% - 2 * var(--spacing-md));
+      justify-content: center;
     }
 
     /* ========================================
@@ -1129,6 +1174,11 @@
     }
 
     @media (max-width: 768px) {
+      /* 导航栏相对定位以支持绝对定位的菜单 */
+      .navbar-container {
+        position: relative;
+      }
+
       .navbar-menu {
         display: none;
       }
@@ -1785,6 +1835,42 @@
         navbar.classList.add('scrolled');
       } else {
         navbar.classList.remove('scrolled');
+      }
+    });
+
+    // 移动端菜单切换
+    document.addEventListener('DOMContentLoaded', function() {
+      const navbarToggle = document.querySelector('.navbar-toggle');
+      const navbarMenu = document.querySelector('.navbar-menu');
+      
+      if (navbarToggle && navbarMenu) {
+        navbarToggle.addEventListener('click', function() {
+          navbarMenu.classList.toggle('mobile-active');
+          
+          // 更新按钮文本以指示状态
+          if (navbarMenu.classList.contains('mobile-active')) {
+            navbarToggle.textContent = '✕';
+          } else {
+            navbarToggle.textContent = '☰';
+          }
+        });
+        
+        // 点击菜单项后关闭菜单
+        const menuLinks = navbarMenu.querySelectorAll('a, button');
+        menuLinks.forEach(link => {
+          link.addEventListener('click', function() {
+            navbarMenu.classList.remove('mobile-active');
+            navbarToggle.textContent = '☰';
+          });
+        });
+        
+        // 点击外部区域关闭菜单
+        document.addEventListener('click', function(event) {
+          if (!navbarToggle.contains(event.target) && !navbarMenu.contains(event.target)) {
+            navbarMenu.classList.remove('mobile-active');
+            navbarToggle.textContent = '☰';
+          }
+        });
       }
     });
 

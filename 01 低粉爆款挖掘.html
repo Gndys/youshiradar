@@ -388,6 +388,56 @@
       });
     }
     
+    // 初始化默认API（如果池为空）
+    async function initDefaultApi() {
+      if (API_POOL.length > 0) {
+        console.log('API池已有数据，跳过添加默认API');
+        return;
+      }
+      
+      console.log('📦 API池为空，添加默认免费API...');
+      
+      const defaultApiKey = 'AIzaSyDfDnHWoisuG3Xc8oF9YR_CgSmu43i6P48';
+      
+      // 直接保存到IndexedDB
+      const defaultApi = {
+        apiKey: defaultApiKey,
+        status: 'active',
+        addedAt: new Date().toISOString(),
+        usageCount: 0,
+        lastUsed: null,
+        note: '官方提供（免费）',
+        isDefault: true
+      };
+      
+      // 保存到数据库
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['apiPool'], 'readwrite');
+        const store = transaction.objectStore('apiPool');
+        
+        // 先检查是否已存在
+        const index = store.index('apiKey');
+        const checkRequest = index.get(defaultApiKey);
+        
+        checkRequest.onsuccess = () => {
+          if (!checkRequest.result) {
+            // 不存在，添加
+            store.add(defaultApi);
+          }
+        };
+        
+        transaction.oncomplete = async () => {
+          // 重新加载API池
+          await loadApiPool();
+          updateApiStatus();
+          console.log('✅ 默认API已添加并加载');
+          resolve();
+        };
+        
+        transaction.onerror = () => reject(transaction.error);
+      });
+    }
+    
     // 标记API为exhausted状态
     async function markApiAsExhaustedInDB(apiKey) {
       return new Promise((resolve, reject) => {
@@ -514,6 +564,9 @@
       
       // 加载API池
       await loadApiPool();
+      
+      // 如果API池为空，自动添加默认API
+      await initDefaultApi();
       
       // 初始化API状态显示
       updateApiStatus();

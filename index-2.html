@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHANTOM RADAR - 找到下一个百万播放的创作者</title>
+  <meta name="description" content="AI驱动的YouTube数据分析平台。10分钟发现100+低粉爆款博主,让你比竞争对手快10倍发现爆款机会。">
+  <style>
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========================================
+       DESIGN TOKENS - 专业数据驱动风格
+       ======================================== */
+    :root {
+      /* 主色调 - 深蓝黑专业系统 */
+      --color-bg-base: #0a0e1a;
+      --color-bg-elevated: #0f1420;
+      --color-bg-card: #141824;
+      --color-bg-card-hover: #1a1f2e;
+      
+      /* 核心品牌色 */
+      --color-primary: #2563eb;
+      --color-primary-hover: #1d4ed8;
+      --color-primary-light: #3b82f6;
+      
+      /* 数据强调色 */
+      --color-success: #10b981;
+      --color-success-light: #34d399;
+      --color-warning: #f59e0b;
+      --color-danger: #e01e5a;
+      
+      /* 文字颜色 */
+      --color-text-primary: #ffffff;
+      --color-text-secondary: #94a3b8;
+      --color-text-muted: #64748b;
+      
+      /* 边框 */
+      --color-border: rgba(148, 163, 184, 0.1);
+      --color-border-hover: rgba(37, 99, 235, 0.3);
+      
+      /* 渐变系统 */
+      --gradient-primary: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      --gradient-hero: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
+      
+      /* 间距系统 */
+      --spacing-xs: 8px;
+      --spacing-sm: 16px;
+      --spacing-md: 24px;
+      --spacing-lg: 32px;
+      --spacing-xl: 48px;
+      --spacing-2xl: 64px;
+      --spacing-3xl: 96px;
+      
+      /* 圆角 */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      
+      /* 动画 */
+      --ease-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+      --ease-in-out: cubic-bezier(0.65, 0.05, 0.36, 1);
+      
+      /* 阴影 */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.3);
+      --shadow-glow-blue: 0 0 40px rgba(37, 99, 235, 0.3);
+      --shadow-glow-green: 0 0 40px rgba(16, 185, 129, 0.3);
+    }
+
+    /* ========================================
+       BASE STYLES
+       ======================================== */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--color-bg-base);
+      color: var(--color-text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ========================================
+       LAYOUT
+       ======================================== */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+
+    .container-wide {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+
+    section {
+      padding: var(--spacing-3xl) 0;
+    }
+
+    /* ========================================
+       NAVIGATION
+       ======================================== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(10, 14, 26, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .navbar.scrolled {
+      background: rgba(10, 14, 26, 0.95);
+      box-shadow: var(--shadow-md);
+    }
+
+    .navbar-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .navbar-links a {
+      color: var(--color-text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .navbar-links a:hover {
+      color: var(--color-text-primary);
+    }
+
+    .navbar-cta {
+      padding: 10px 24px;
+      background: var(--gradient-primary);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .navbar-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    /* 移动端导航 */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--color-text-primary);
+      font-size: 24px;
+      cursor: pointer;
+      padding: var(--spacing-xs);
+    }
+
+    /* ========================================
+       HERO SECTION - 数据驱动型
+       ======================================== */
+    .hero {
+      padding-top: 140px;
+      padding-bottom: var(--spacing-3xl);
+      background: var(--gradient-hero);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-2xl);
+      align-items: center;
+    }
+
+    .hero-content {
+      max-width: 580px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: 8px 16px;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid var(--color-border-hover);
+      border-radius: 100px;
+      color: var(--color-primary-light);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+      animation: fadeInUp 0.6s var(--ease-out);
+    }
+
+    .hero-badge::before {
+      content: '●';
+      color: var(--color-success);
+      animation: pulse 2s infinite;
+    }
+
+    .hero-title {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--spacing-md);
+      background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeInUp 0.6s 0.1s var(--ease-out) backwards;
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-xl);
+      animation: fadeInUp 0.6s 0.2s var(--ease-out) backwards;
+    }
+
+    /* 核心数据指标 */
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+      animation: fadeInUp 0.6s 0.3s var(--ease-out) backwards;
+    }
+
+    .hero-stat {
+      text-align: center;
+      padding: var(--spacing-md);
+      background: rgba(20, 24, 36, 0.4);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+
+    .hero-stat:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-border-hover);
+      background: rgba(20, 24, 36, 0.6);
+    }
+
+    .hero-stat-number {
+      display: block;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--color-primary-light);
+      margin-bottom: var(--spacing-xs);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-stat-label {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      font-weight: 500;
+    }
+
+    /* Hero CTA */
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      animation: fadeInUp 0.6s 0.4s var(--ease-out) backwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    .btn-secondary {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(148, 163, 184, 0.15);
+      border-color: var(--color-border-hover);
+    }
+
+    /* Hero 可视化区域 */
+    .hero-visual {
+      position: relative;
+      height: 500px;
+      animation: fadeIn 0.8s 0.3s var(--ease-out) backwards;
+    }
+
+    .hero-dashboard {
+      position: absolute;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(10px);
+    }
+
+    .dashboard-main {
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    .dashboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .dashboard-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    .dashboard-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--color-success);
+    }
+
+    .dashboard-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--color-success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .dashboard-metric {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      background: rgba(37, 99, 235, 0.05);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .metric-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .metric-content {
+      flex: 1;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-bottom: 2px;
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    /* ========================================
+       SOCIAL PROOF - Logo墙
+       ======================================== */
+    .social-proof {
+      padding: var(--spacing-xl) 0;
+      text-align: center;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .social-proof-text {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .social-proof-icons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+    }
+
+    .proof-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.2s;
+    }
+
+    .proof-icon:hover {
+      transform: scale(1.1);
+      border-color: var(--color-border-hover);
+    }
+
+    /* ========================================
+       CORE VALUES - 极简三列
+       ======================================== */
+    .core-values {
+      background: var(--color-bg-base);
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto var(--spacing-2xl);
+    }
+
+    .section-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid var(--color-border-hover);
+      border-radius: 100px;
+      color: var(--color-primary-light);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .section-title {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+
+    .value-card {
+      text-align: center;
+      padding: var(--spacing-xl);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      transition: all 0.3s;
+    }
+
+    .value-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--color-border-hover);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .value-icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto var(--spacing-md);
+      background: var(--gradient-primary);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    .value-card:nth-child(2) .value-icon {
+      background: var(--gradient-success);
+      box-shadow: var(--shadow-glow-green);
+    }
+
+    .value-card:nth-child(3) .value-icon {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      box-shadow: 0 0 40px rgba(245, 158, 11, 0.3);
+    }
+
+    .value-number {
+      display: block;
+      font-size: 40px;
+      font-weight: 800;
+      margin-bottom: var(--spacing-xs);
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .value-card:nth-child(2) .value-number {
+      background: var(--gradient-success);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .value-card:nth-child(3) .value-number {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .value-label {
+      font-size: 15px;
+      color: var(--color-text-muted);
+      font-weight: 500;
+    }
+
+    /* ========================================
+       TOOLS NAVIGATION - 大卡片式（核心重点！）
+       ======================================== */
+    .tools-section {
+      background: var(--color-bg-elevated);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .tool-card {
+      position: relative;
+      padding: var(--spacing-xl);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      transition: all 0.3s;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-border-hover);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .tool-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .tool-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(37, 99, 235, 0.1);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .tool-info {
+      flex: 1;
+    }
+
+    .tool-name {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: var(--spacing-xs);
+      color: var(--color-text-primary);
+    }
+
+    .tool-desc {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .tool-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .tool-feature {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .tool-feature::before {
+      content: '✓';
+      color: var(--color-success);
+      font-weight: 700;
+    }
+
+    .tool-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-primary-light);
+    }
+
+    .tool-arrow::after {
+      content: '→';
+      transition: transform 0.3s;
+    }
+
+    .tool-card:hover .tool-arrow::after {
+      transform: translateX(4px);
+    }
+
+    /* API池工具卡片（横向大卡片）*/
+    .tool-card-wide {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+    }
+
+    /* ========================================
+       FEATURES - 左右交替布局
+       ======================================== */
+    .features-section {
+      background: var(--color-bg-base);
+    }
+
+    .feature-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-2xl);
+      align-items: center;
+      margin-bottom: var(--spacing-3xl);
+    }
+
+    .feature-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .feature-item:nth-child(even) .feature-content {
+      order: 2;
+    }
+
+    .feature-item:nth-child(even) .feature-visual {
+      order: 1;
+    }
+
+    .feature-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid var(--color-border-hover);
+      border-radius: 100px;
+      color: var(--color-primary-light);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .feature-title {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .feature-desc {
+      font-size: 16px;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .feature-points {
+      list-style: none;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .feature-points li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) 0;
+      font-size: 15px;
+      color: var(--color-text-secondary);
+    }
+
+    .feature-points li::before {
+      content: '✓';
+      color: var(--color-success);
+      font-weight: 700;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .feature-visual {
+      position: relative;
+      height: 400px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .feature-screenshot {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 模拟截图占位符 */
+    .feature-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+      font-size: 64px;
+    }
+
+    /* ========================================
+       COMPARISON - 对比表格
+       ======================================== */
+    .comparison-section {
+      background: var(--color-bg-elevated);
+    }
+
+    .comparison-table {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison-table thead {
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .comparison-table th {
+      padding: var(--spacing-md);
+      text-align: left;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .comparison-table th:first-child {
+      width: 35%;
+    }
+
+    .comparison-table td {
+      padding: var(--spacing-md);
+      font-size: 14px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+    }
+
+    .comparison-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table tbody tr:hover {
+      background: rgba(37, 99, 235, 0.02);
+    }
+
+    .comparison-check {
+      color: var(--color-success);
+      font-weight: 700;
+    }
+
+    .comparison-cross {
+      color: var(--color-text-muted);
+    }
+
+    /* ========================================
+       FAQ - 简洁版
+       ======================================== */
+    .faq-section {
+      background: var(--color-bg-base);
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      margin-bottom: var(--spacing-sm);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .faq-item:hover {
+      border-color: var(--color-border-hover);
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: var(--spacing-md);
+      background: none;
+      border: none;
+      color: var(--color-text-primary);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-sm);
+    }
+
+    .faq-question:hover {
+      color: var(--color-primary-light);
+    }
+
+    .faq-icon {
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s var(--ease-out);
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+    }
+
+    .faq-answer-content {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ========================================
+       FINAL CTA
+       ======================================== */
+    .final-cta {
+      background: var(--color-bg-elevated);
+    }
+
+    .cta-container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      padding: var(--spacing-3xl);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+    }
+
+    .cta-title {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .cta-subtitle {
+      font-size: 18px;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .cta-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .cta-features {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    .cta-feature {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cta-feature::before {
+      content: '✓';
+      color: var(--color-success);
+      font-weight: 700;
+    }
+
+    /* ========================================
+       FOOTER
+       ======================================== */
+    .footer {
+      background: var(--color-bg-base);
+      border-top: 1px solid var(--color-border);
+      padding: var(--spacing-2xl) 0;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .footer-brand {
+      max-width: 320px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .footer-desc {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+    }
+
+    .footer-section h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-text-primary);
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .footer-links a {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-primary-light);
+    }
+
+    .footer-bottom {
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--color-text-muted);
+    }
+
+    /* ========================================
+       ANIMATIONS
+       ======================================== */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* ========================================
+       RESPONSIVE - 移动端适配
+       ======================================== */
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .feature-item {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+      }
+
+      .hero-visual {
+        height: 400px;
+      }
+
+      .feature-item:nth-child(even) .feature-content,
+      .feature-item:nth-child(even) .feature-visual {
+        order: initial;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-lg);
+      }
+    }
+
+    @media (max-width: 768px) {
+      section {
+        padding: var(--spacing-2xl) 0;
+      }
+
+      .hero {
+        padding-top: 100px;
+        padding-bottom: var(--spacing-2xl);
+      }
+
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .hero-subtitle {
+        font-size: 16px;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .navbar-links {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 32px;
+      }
+
+      .feature-title {
+        font-size: 28px;
+      }
+
+      .cta-title {
+        font-size: 32px;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .cta-features {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+      }
+
+      .comparison-table {
+        overflow-x: auto;
+      }
+    }
+
+    /* ========================================
+       UTILITY CLASSES
+       ======================================== */
+    .text-gradient {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-content">
+      <a href="#" class="navbar-logo">
+        <div class="logo-icon">📡</div>
+        <span>PHANTOM RADAR</span>
+      </a>
+      
+      <div class="navbar-links">
+        <a href="#features">功能</a>
+        <a href="#tools">工具</a>
+        <a href="#comparison">对比</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      
+      <button class="navbar-cta" onclick="scrollToTools()">立即开始</button>
+      
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero 区域 - 数据驱动型 -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-badge">
+            正在分析 YouTube 数据
+          </div>
+          
+          <h1 class="hero-title">找到下一个百万播放的创作者</h1>
+          
+          <p class="hero-subtitle">
+            AI驱动的YouTube数据分析平台，让你比竞争对手快10倍发现爆款机会。自动挖掘"粉丝少、视频爆"的潜力创作者。
+          </p>
+          
+          <!-- 核心数据指标 -->
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-number" data-count="50000">50,000+</span>
+              <span class="hero-stat-label">已分析频道</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-number" data-count="12000">12,000+</span>
+              <span class="hero-stat-label">低粉爆款</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-number">85%</span>
+              <span class="hero-stat-label">时间节省</span>
+            </div>
+          </div>
+          
+          <!-- CTA 按钮 -->
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="scrollToTools()">
+              立即免费使用 →
+            </button>
+            <button class="btn btn-secondary" onclick="scrollTo(0, 800)">
+              了解工作原理
+            </button>
+          </div>
+        </div>
+        
+        <!-- 可视化数据看板 -->
+        <div class="hero-visual">
+          <div class="hero-dashboard dashboard-main">
+            <div class="dashboard-header">
+              <div class="dashboard-title">实时数据分析</div>
+              <div class="dashboard-status">正在运行</div>
+            </div>
+            
+            <div class="dashboard-metric">
+              <div class="metric-icon">🎯</div>
+              <div class="metric-content">
+                <div class="metric-label">今日发现爆款</div>
+                <div class="metric-value">127 个博主</div>
+              </div>
+            </div>
+            
+            <div class="dashboard-metric">
+              <div class="metric-icon">📊</div>
+              <div class="metric-content">
+                <div class="metric-label">平均播放量</div>
+                <div class="metric-value">2.3M 次</div>
+              </div>
+            </div>
+            
+            <div class="dashboard-metric">
+              <div class="metric-icon">⚡</div>
+              <div class="metric-content">
+                <div class="metric-label">分析速度</div>
+                <div class="metric-value">10分钟/100博主</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 社会证明 -->
+  <section class="social-proof">
+    <div class="container">
+      <p class="social-proof-text">已被 500+ 创作者和MCN机构使用</p>
+      <div class="social-proof-icons">
+        <div class="proof-icon">👤</div>
+        <div class="proof-icon">👥</div>
+        <div class="proof-icon">🎬</div>
+        <div class="proof-icon">📱</div>
+        <div class="proof-icon">🎨</div>
+        <div class="proof-icon">🎮</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心价值 - 极简三列 -->
+  <section class="core-values">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">三大核心能力</div>
+        <h2 class="section-title">为什么选择 PHANTOM RADAR</h2>
+        <p class="section-subtitle">用数据驱动你的内容策略，让创作不再盲目</p>
+      </div>
+      
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">🎯</div>
+          <span class="value-number">10分钟</span>
+          <p class="value-label">找到100+潜力博主</p>
+        </div>
+        
+        <div class="value-card">
+          <div class="value-icon">🤖</div>
+          <span class="value-number">5倍效率</span>
+          <p class="value-label">自动化监控分析</p>
+        </div>
+        
+        <div class="value-card">
+          <div class="value-icon">⚡</div>
+          <span class="value-number">0担心</span>
+          <p class="value-label">智能API池化管理</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 工具导航 - 大卡片式（核心！）-->
+  <section class="tools-section" id="tools">
+    <div class="container-wide">
+      <div class="section-header">
+        <div class="section-badge">5个核心工具</div>
+        <h2 class="section-title">选择你需要的工具</h2>
+        <p class="section-subtitle">从挖掘到管理，从监控到分析，全流程覆盖</p>
+      </div>
+      
+      <div class="tools-grid">
+        <!-- 工具1：低粉爆款挖掘 -->
+        <a href="01 低粉爆款挖掘.html" class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">🎯</div>
+            <div class="tool-info">
+              <h3 class="tool-name">低粉爆款挖掘</h3>
+            </div>
+          </div>
+          <p class="tool-desc">
+            发现那些粉丝少但视频爆的创作者，这才是最值得学习的对象。10分钟找到100+可复制的成功案例。
+          </p>
+          <div class="tool-features">
+            <span class="tool-feature">自定义筛选条件</span>
+            <span class="tool-feature">批量搜索分析</span>
+            <span class="tool-feature">收益估算</span>
+          </div>
+          <span class="tool-arrow">立即使用</span>
+        </a>
+        
+        <!-- 工具2：博主管理系统 -->
+        <a href="02 YouTube博主管理工具.html" class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">📊</div>
+            <div class="tool-info">
+              <h3 class="tool-name">博主管理系统</h3>
+            </div>
+          </div>
+          <p class="tool-desc">
+            系统化管理你的对标博主数据库，告别杂乱的收藏夹和Excel表格。支持分类、标签、笔记。
+          </p>
+          <div class="tool-features">
+            <span class="tool-feature">分类管理</span>
+            <span class="tool-feature">批量导入</span>
+            <span class="tool-feature">数据导出</span>
+          </div>
+          <span class="tool-arrow">立即使用</span>
+        </a>
+        
+        <!-- 工具3：视频监控工具 -->
+        <a href="03 视频监控工具.html" class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">🔍</div>
+            <div class="tool-info">
+              <h3 class="tool-name">视频监控工具</h3>
+            </div>
+          </div>
+          <p class="tool-desc">
+            自动追踪对标博主的最新视频，实时发现爆款趋势。支持排行榜分析，永不错过黄金学习期。
+          </p>
+          <div class="tool-features">
+            <span class="tool-feature">自动抓取</span>
+            <span class="tool-feature">排行榜</span>
+            <span class="tool-feature">趋势分析</span>
+          </div>
+          <span class="tool-arrow">立即使用</span>
+        </a>
+        
+        <!-- 工具4：标签管理工具 -->
+        <a href="04 标签管理工具.html" class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon">🏷️</div>
+            <div class="tool-info">
+              <h3 class="tool-name">标签管理工具</h3>
+            </div>
+          </div>
+          <p class="tool-desc">
+            建立你的专属标签和选题库，每次策划都有数据支持。智能评分系统帮你找到最佳选题。
+          </p>
+          <div class="tool-features">
+            <span class="tool-feature">标签打分</span>
+            <span class="tool-feature">热度分析</span>
+            <span class="tool-feature">选题库</span>
+          </div>
+          <span class="tool-arrow">立即使用</span>
+        </a>
+        
+        <!-- 工具5：API智能池（横向大卡片）-->
+        <a href="API池管理工具.html" class="tool-card tool-card-wide">
+          <div class="tool-header">
+            <div class="tool-icon">⚡</div>
+            <div class="tool-info">
+              <h3 class="tool-name">API智能池管理</h3>
+            </div>
+          </div>
+          <p class="tool-desc">
+            突破YouTube API配额限制！支持多Key轮换、智能负载均衡、自动故障切换。再也不用担心配额不够用。
+          </p>
+          <div class="tool-features">
+            <span class="tool-feature">多Key池化</span>
+            <span class="tool-feature">智能轮换</span>
+            <span class="tool-feature">实时监控</span>
+            <span class="tool-feature">自动恢复</span>
+          </div>
+          <span class="tool-arrow">立即配置</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 功能展示 - 左右交替 -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">工作流程</div>
+        <h2 class="section-title">PHANTOM RADAR 如何帮你成功</h2>
+      </div>
+      
+      <!-- 功能1 -->
+      <div class="feature-item">
+        <div class="feature-content">
+          <div class="feature-badge">STEP 1</div>
+          <h3 class="feature-title">精准雷达扫描</h3>
+          <p class="feature-desc">
+            输入关键词，设置粉丝数上限，AI自动搜索YouTube数据库。10分钟找到100+符合条件的低粉爆款博主。
+          </p>
+          <ul class="feature-points">
+            <li>自定义筛选条件（粉丝数、播放量、发布时间）</li>
+            <li>批量搜索和分析，支持多个关键词组合</li>
+            <li>智能去重，避免重复分析</li>
+            <li>一键导出博主列表到Excel</li>
+          </ul>
+          <button class="btn btn-primary" onclick="location.href='01 低粉爆款挖掘.html'">
+            开始挖掘 →
+          </button>
+        </div>
+        <div class="feature-visual">
+          <div class="feature-placeholder">🎯</div>
+        </div>
+      </div>
+      
+      <!-- 功能2 -->
+      <div class="feature-item">
+        <div class="feature-content">
+          <div class="feature-badge">STEP 2</div>
+          <h3 class="feature-title">智能数据分析</h3>
+          <p class="feature-desc">
+            自动获取频道详细信息，包括订阅数、视频数量、总播放量。AI计算收益估算，让你了解创作者的商业价值。
+          </p>
+          <ul class="feature-points">
+            <li>实时获取频道统计数据</li>
+            <li>收益估算（基于CPM和播放量）</li>
+            <li>标签热度分析和评分</li>
+            <li>一目了然的数据可视化</li>
+          </ul>
+          <button class="btn btn-primary" onclick="location.href='02 YouTube博主管理工具.html'">
+            管理数据 →
+          </button>
+        </div>
+        <div class="feature-visual">
+          <div class="feature-placeholder">📊</div>
+        </div>
+      </div>
+      
+      <!-- 功能3 -->
+      <div class="feature-item">
+        <div class="feature-content">
+          <div class="feature-badge">STEP 3</div>
+          <h3 class="feature-title">系统化管理</h3>
+          <p class="feature-desc">
+            分类保存博主，添加自定义标签和笔记。支持批量导入频道ID，告别杂乱无章的收藏方式。
+          </p>
+          <ul class="feature-points">
+            <li>分类管理（竞品、学习对象、合作目标）</li>
+            <li>批量导入频道ID和URL</li>
+            <li>添加自定义笔记和标签</li>
+            <li>CSV格式导出，随时备份</li>
+          </ul>
+          <button class="btn btn-primary" onclick="location.href='02 YouTube博主管理工具.html'">
+            开始管理 →
+          </button>
+        </div>
+        <div class="feature-visual">
+          <div class="feature-placeholder">📁</div>
+        </div>
+      </div>
+      
+      <!-- 功能4 -->
+      <div class="feature-item">
+        <div class="feature-content">
+          <div class="feature-badge">STEP 4</div>
+          <h3 class="feature-title">持续监控追踪</h3>
+          <p class="feature-desc">
+            自动抓取对标博主的最新视频，智能排行榜分析帮你发现新趋势。永不错过爆款学习的黄金时期。
+          </p>
+          <ul class="feature-points">
+            <li>自动抓取最新视频（支持批量）</li>
+            <li>播放量排行榜（7天/30天）</li>
+            <li>标签热度统计和趋势分析</li>
+            <li>收益估算和数据对比</li>
+          </ul>
+          <button class="btn btn-primary" onclick="location.href='03 视频监控工具.html'">
+            开始监控 →
+          </button>
+        </div>
+        <div class="feature-visual">
+          <div class="feature-placeholder">🔍</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 对比表格 -->
+  <section class="comparison-section" id="comparison">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">数据对比</div>
+        <h2 class="section-title">为什么选择 PHANTOM RADAR</h2>
+        <p class="section-subtitle">对比传统方法，效率提升10倍</p>
+      </div>
+      
+      <div class="comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th>对比维度</th>
+              <th>传统手动方法</th>
+              <th>PHANTOM RADAR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>发现效率</strong></td>
+              <td>手动1小时找10个</td>
+              <td><span class="comparison-check">✓</span> 自动10分钟找100+</td>
+            </tr>
+            <tr>
+              <td><strong>数据深度</strong></td>
+              <td>只能看基础数据</td>
+              <td><span class="comparison-check">✓</span> 收益估算+标签分析</td>
+            </tr>
+            <tr>
+              <td><strong>持续监控</strong></td>
+              <td>需要手动追踪</td>
+              <td><span class="comparison-check">✓</span> 自动监控+排行榜</td>
+            </tr>
+            <tr>
+              <td><strong>数据管理</strong></td>
+              <td>Excel杂乱无章</td>
+              <td><span class="comparison-check">✓</span> 系统化分类管理</td>
+            </tr>
+            <tr>
+              <td><strong>API管理</strong></td>
+              <td>单Key易超限</td>
+              <td><span class="comparison-check">✓</span> 智能池化轮换</td>
+            </tr>
+            <tr>
+              <td><strong>数据安全</strong></td>
+              <td>依赖第三方平台</td>
+              <td><span class="comparison-check">✓</span> 本地存储100%私密</td>
+            </tr>
+            <tr>
+              <td><strong>成本</strong></td>
+              <td>付费工具昂贵</td>
+              <td><span class="comparison-check">✓</span> 完全免费开源</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ - 简洁版 -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">常见问题</div>
+        <h2 class="section-title">还有疑问？这里有答案</h2>
+      </div>
+      
+      <div class="faq-container">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>需要编程基础吗？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              完全不需要！只需在浏览器中打开HTML文件即可使用，像打开网页一样简单。所有操作都有直观的界面引导。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>数据存储在哪里？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              所有数据存储在您的本地浏览器中（使用IndexedDB技术），不会上传到任何服务器，100%保护您的隐私。您可以随时导出备份数据。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>需要YouTube API Key吗？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              需要，但我们提供详细的获取教程，5分钟即可完成配置。YouTube API Key是完全免费的，每天有10,000单位配额。使用我们的API池功能可以轻松突破这个限制。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>支持哪些浏览器？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              支持所有现代浏览器，包括Chrome、Edge、Firefox、Safari等。推荐使用最新版本的Chrome或Edge以获得最佳体验。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>有使用限制吗？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              只受YouTube API配额限制（单个Key每天10,000单位）。我们的API池功能支持添加多个Key轮换使用，可以轻松突破这个限制。工具本身没有任何功能限制。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 最终CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <div class="cta-container">
+        <h2 class="cta-title">准备好发现下一个爆款了吗？</h2>
+        <p class="cta-subtitle">加入500+创作者，让数据驱动你的内容策略</p>
+        
+        <div class="cta-buttons">
+          <button class="btn btn-primary" onclick="scrollToTools()">
+            立即免费开始 →
+          </button>
+        </div>
+        
+        <div class="cta-features">
+          <span class="cta-feature">无需注册</span>
+          <span class="cta-feature">无需付费</span>
+          <span class="cta-feature">立即使用</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="logo-icon">📡</div>
+            <span>PHANTOM RADAR</span>
+          </div>
+          <p class="footer-desc">
+            发现被忽视的爆款创作者。AI驱动的YouTube数据分析平台，让内容创作不再盲目。
+          </p>
+        </div>
+        
+        <div class="footer-section">
+          <h4>核心工具</h4>
+          <ul class="footer-links">
+            <li><a href="01 低粉爆款挖掘.html">低粉爆款挖掘</a></li>
+            <li><a href="02 YouTube博主管理工具.html">博主管理系统</a></li>
+            <li><a href="03 视频监控工具.html">视频监控工具</a></li>
+            <li><a href="04 标签管理工具.html">标签管理工具</a></li>
+            <li><a href="API池管理工具.html">API池管理</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>文档中心</h4>
+          <ul class="footer-links">
+            <li><a href="docs/快速入门指南.md">快速入门指南</a></li>
+            <li><a href="docs/API配置说明.md">API配置说明</a></li>
+            <li><a href="docs/故障排除指南.md">故障排除</a></li>
+            <li><a href="docs/README.md">使用文档</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>其他工具</h4>
+          <ul class="footer-links">
+            <li><a href="utilities/快速修复工具.html">快速修复工具</a></li>
+            <li><a href="utilities/存储状态检查.html">存储状态检查</a></li>
+            <li><a href="utilities/API池诊断修复工具.html">API池诊断</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <div>© 2025 PHANTOM RADAR. 开源免费工具.</div>
+        <div>Version 3.0 | 让数据驱动你的内容策略</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ========================================
+    // 导航栏滚动效果
+    // ========================================
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // ========================================
+    // FAQ 展开/折叠
+    // ========================================
+    function toggleFAQ(button) {
+      const faqItem = button.parentElement;
+      const isActive = faqItem.classList.contains('active');
+      
+      // 关闭所有FAQ
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // 如果当前项不是激活状态，则激活它
+      if (!isActive) {
+        faqItem.classList.add('active');
+      }
+    }
+
+    // ========================================
+    // 平滑滚动到工具区域
+    // ========================================
+    function scrollToTools() {
+      document.getElementById('tools').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+
+    // ========================================
+    // 移动端菜单切换
+    // ========================================
+    function toggleMobileMenu() {
+      const navbarLinks = document.querySelector('.navbar-links');
+      navbarLinks.style.display = navbarLinks.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // ========================================
+    // 数字滚动动画
+    // ========================================
+    function animateNumbers() {
+      const stats = document.querySelectorAll('.hero-stat-number');
+      
+      stats.forEach(stat => {
+        const target = stat.getAttribute('data-count');
+        if (!target) return;
+        
+        const count = parseInt(target.replace(/[^0-9]/g, ''));
+        const duration = 2000;
+        const increment = count / (duration / 16);
+        let current = 0;
+        
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= count) {
+            current = count;
+            clearInterval(timer);
+          }
+          
+          if (target.includes('+')) {
+            stat.textContent = Math.floor(current).toLocaleString() + '+';
+          } else {
+            stat.textContent = Math.floor(current).toLocaleString();
+          }
+        }, 16);
+      });
+    }
+
+    // 页面加载完成后执行数字动画
+    window.addEventListener('load', () => {
+      // 延迟一点执行，让用户看到动画
+      setTimeout(animateNumbers, 500);
+    });
+
+    // ========================================
+    // 滚动动画观察器（可选）
+    // ========================================
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // 观察所有卡片
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.value-card, .tool-card, .feature-item');
+      cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+      });
+    });
+  </script>
+</body>
+</html>
+

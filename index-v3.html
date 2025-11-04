@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHANTOM RADAR - 低粉爆款雷达</title>
+  <meta name="description" content="发现下一个爆款创作者。AI驱动的YouTube数据分析工具集，让你在竞争中保持领先。">
+  <style>
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========================================
+       DESIGN TOKENS - 完美主义配色系统
+       ======================================== */
+    :root {
+      /* 颜色层级 - 深度黑色系统 */
+      --color-bg-base: #000000;
+      --color-bg-elevated: #0a0a0f;
+      --color-bg-card: #141419;
+      --color-bg-card-hover: #1e1e24;
+      
+      /* 主要颜色 */
+      --color-primary: #e01e5a;
+      --color-primary-hover: #ff3366;
+      --color-primary-glow: rgba(224, 30, 90, 0.3);
+      
+      /* 荧光强调色 */
+      --color-accent-green: #00ff87;
+      --color-accent-cyan: #00d4ff;
+      --color-accent-yellow: #ffd23f;
+      
+      /* 文字颜色 */
+      --color-text-primary: #ffffff;
+      --color-text-secondary: #b8b8c8;
+      --color-text-muted: #6e6e7e;
+      
+      /* 边框 */
+      --color-border: rgba(255, 255, 255, 0.06);
+      --color-border-hover: rgba(224, 30, 90, 0.3);
+      
+      /* 渐变系统 */
+      --gradient-primary: linear-gradient(135deg, #e01e5a 0%, #ff3366 100%);
+      --gradient-accent: linear-gradient(135deg, #00ff87 0%, #00d4ff 100%);
+      --gradient-hero: radial-gradient(circle at 30% 50%, rgba(224, 30, 90, 0.15) 0%, transparent 50%);
+      
+      /* 间距系统 */
+      --spacing-xs: 8px;
+      --spacing-sm: 16px;
+      --spacing-md: 24px;
+      --spacing-lg: 40px;
+      --spacing-xl: 60px;
+      --spacing-2xl: 80px;
+      --spacing-3xl: 120px;
+      --spacing-section: 160px;
+      
+      /* 圆角 */
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      
+      /* 动画曲线 - Framer Motion 风格 */
+      --ease-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+      --ease-in-out: cubic-bezier(0.65, 0.05, 0.36, 1);
+      --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      
+      /* 阴影系统 */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.3);
+      --shadow-glow: 0 0 40px var(--color-primary-glow);
+      
+      /* 玻璃态效果 */
+      --glass-bg: rgba(20, 20, 25, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ========================================
+       BASE STYLES
+       ======================================== */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--color-bg-base);
+      color: var(--color-text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* 页面滚动进度条 */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      z-index: 9999;
+      transform-origin: 0%;
+      transition: transform 0.1s linear;
+    }
+
+    /* ========================================
+       滚动公告栏 - 降低视觉权重
+       ======================================== */
+    .announcement-bar {
+      background: var(--color-bg-elevated);
+      border-bottom: 1px solid var(--color-border);
+      padding: 10px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .announcement-content {
+      display: flex;
+      white-space: nowrap;
+      animation: scroll-left 40s linear infinite;
+    }
+
+    .announcement-text {
+      display: inline-block;
+      padding: 0 40px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      color: var(--color-text-muted);
+      opacity: 0.7;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ========================================
+       导航栏 - 玻璃态设计
+       ======================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 20px 0;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .navbar.scrolled {
+      padding: 12px 0;
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: transform 0.3s var(--ease-out);
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      position: relative;
+      transition: color 0.3s var(--ease-out);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-primary);
+      transition: width 0.3s var(--ease-out);
+    }
+
+    .nav-links a:hover {
+      color: var(--color-text-primary);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 12px 28px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s var(--ease-out);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .nav-cta:hover::before {
+      left: 100%;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow);
+    }
+
+    /* ========================================
+       HERO 区 - 左右分屏革命性设计
+       ======================================== */
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-section) var(--spacing-lg);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-2xl);
+      align-items: center;
+      min-height: 85vh;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--gradient-hero);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .hero-content {
+      opacity: 0;
+      animation: fadeInUp 1s var(--ease-out) 0.3s forwards;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      background: rgba(224, 30, 90, 0.1);
+      border: 1px solid var(--color-border-hover);
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--color-primary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .hero-eyebrow::before {
+      content: '●';
+      color: var(--color-accent-green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, var(--color-text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 .highlight {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero .subtitle {
+      font-size: 20px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-xl);
+      max-width: 540px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 16px 32px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all 0.3s var(--ease-out);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: 0 8px 24px rgba(224, 30, 90, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-text-primary);
+      border: 2px solid var(--color-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-primary);
+      background: rgba(224, 30, 90, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Hero 右侧可视化 */
+    .hero-visual {
+      position: relative;
+      height: 500px;
+      opacity: 0;
+      animation: fadeInUp 1s var(--ease-out) 0.6s forwards;
+    }
+
+    .hero-visual-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.6;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .orb-1 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(224, 30, 90, 0.4) 0%, transparent 70%);
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .orb-2 {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(0, 255, 135, 0.3) 0%, transparent 70%);
+      top: 40%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+
+    .orb-3 {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
+      bottom: 20%;
+      left: 30%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+
+    .hero-stats {
+      position: absolute;
+      bottom: 10%;
+      right: 10%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-lg);
+      min-width: 200px;
+      animation: slideInRight 1s var(--ease-out) 1s both;
+    }
+
+    .hero-stats-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .hero-stats-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .hero-stats-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .hero-stats-text {
+      flex: 1;
+    }
+
+    .hero-stats-label {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    .hero-stats-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ========================================
+       统计数据 - 横向滚动轮播
+       ======================================== */
+    .stats {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg) var(--spacing-3xl);
+      overflow: hidden;
+    }
+
+    .stats-scroll-container {
+      display: flex;
+      gap: var(--spacing-md);
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: var(--spacing-xs) 0;
+    }
+
+    .stats-scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .stat-card {
+      flex: 0 0 280px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl) var(--spacing-lg);
+      text-align: center;
+      transition: all 0.4s var(--ease-out);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(224, 30, 90, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-out);
+    }
+
+    .stat-card:hover {
+      background: var(--color-bg-card-hover);
+      border-color: var(--color-border-hover);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-number {
+      font-size: 64px;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: var(--spacing-xs);
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========================================
+       核心功能 - Bento Grid 不等宽布局
+       ======================================== */
+    .section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-section) var(--spacing-lg);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--spacing-2xl);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section-label {
+      display: inline-block;
+      background: rgba(0, 255, 135, 0.1);
+      color: var(--color-accent-green);
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      margin-bottom: var(--spacing-md);
+      text-transform: uppercase;
+      border: 1px solid rgba(0, 255, 135, 0.2);
+    }
+
+    .section-title {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.02em;
+    }
+
+    .section-description {
+      font-size: 18px;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-xl);
+    }
+
+    .bento-item {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-xl);
+      transition: all 0.4s var(--ease-out);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bento-item::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(224, 30, 90, 0.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-out);
+    }
+
+    .bento-item:hover {
+      background: var(--color-bg-card-hover);
+      border-color: var(--color-border-hover);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .bento-item:hover::before {
+      opacity: 1;
+    }
+
+    /* Bento 尺寸变化 */
+    .bento-large {
+      grid-column: span 6;
+      min-height: 400px;
+    }
+
+    .bento-medium {
+      grid-column: span 4;
+      min-height: 350px;
+    }
+
+    .bento-small {
+      grid-column: span 3;
+      min-height: 300px;
+    }
+
+    .feature-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-md);
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: var(--spacing-md);
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s var(--ease-bounce);
+    }
+
+    .bento-item:hover .feature-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-description {
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--spacing-md);
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      transition: all 0.3s var(--ease-out);
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-link:hover {
+      gap: 12px;
+      color: var(--color-primary-hover);
+    }
+
+    /* ========================================
+       工作流程 - 垂直时间轴设计
+       ======================================== */
+    .workflow-container {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-2xl);
+      position: relative;
+    }
+
+    .workflow-timeline {
+      position: relative;
+      padding-left: var(--spacing-2xl);
+    }
+
+    /* 时间轴线 */
+    .workflow-timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, 
+        var(--color-primary) 0%, 
+        var(--color-accent-green) 50%,
+        var(--color-accent-cyan) 100%);
+    }
+
+    .workflow-step {
+      position: relative;
+      margin-bottom: var(--spacing-xl);
+      padding-left: var(--spacing-xl);
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+
+    .workflow-step.visible {
+      animation: slideInLeft 0.6s var(--ease-out) forwards;
+    }
+
+    .workflow-step:nth-child(1) { animation-delay: 0.1s; }
+    .workflow-step:nth-child(2) { animation-delay: 0.2s; }
+    .workflow-step:nth-child(3) { animation-delay: 0.3s; }
+    .workflow-step:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideInLeft {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .step-marker {
+      position: absolute;
+      left: -28px;
+      top: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--color-bg-card);
+      border: 3px solid var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 20px;
+      z-index: 2;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .workflow-step:hover .step-marker {
+      transform: scale(1.15);
+      box-shadow: 0 0 30px var(--color-primary-glow);
+    }
+
+    .step-marker::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s var(--ease-out);
+    }
+
+    .workflow-step:hover .step-marker::before {
+      opacity: 0.3;
+    }
+
+    .step-content {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .workflow-step:hover .step-content {
+      background: var(--color-bg-card-hover);
+      border-color: var(--color-border-hover);
+      transform: translateX(8px);
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .step-description {
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ========================================
+       工具集网格
+       ======================================== */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .tool-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      transition: all 0.4s var(--ease-out);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(0, 255, 135, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-out);
+    }
+
+    .tool-card:hover {
+      background: var(--color-bg-card-hover);
+      border-color: var(--color-border-hover);
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .tool-card:hover::after {
+      opacity: 1;
+    }
+
+    /* ========================================
+       订阅表单 - 玻璃态设计
+       ======================================== */
+    .newsletter {
+      background: var(--gradient-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-2xl);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .newsletter::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.3;
+    }
+
+    .newsletter h3 {
+      font-size: 40px;
+      font-weight: 900;
+      margin-bottom: var(--spacing-sm);
+      position: relative;
+    }
+
+    .newsletter p {
+      font-size: 18px;
+      margin-bottom: var(--spacing-xl);
+      opacity: 0.95;
+      position: relative;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: var(--spacing-sm);
+      max-width: 540px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      min-width: 280px;
+      padding: 18px 24px;
+      border-radius: var(--radius-md);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-size: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .newsletter-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .newsletter-input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .newsletter-button {
+      padding: 18px 36px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: white;
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .newsletter-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================
+       页脚
+       ======================================== */
+    .footer {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      transition: color 0.3s var(--ease-out);
+      position: relative;
+    }
+
+    .footer-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--color-primary);
+      transition: width 0.3s var(--ease-out);
+    }
+
+    .footer-links a:hover {
+      color: var(--color-text-primary);
+    }
+
+    .footer-links a:hover::after {
+      width: 100%;
+    }
+
+    .footer p {
+      color: var(--color-text-muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    /* ========================================
+       移动端菜单按钮
+       ======================================== */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .mobile-menu-btn span {
+      width: 24px;
+      height: 2px;
+      background: var(--color-text-primary);
+      transition: all 0.3s var(--ease-out);
+      border-radius: 2px;
+    }
+
+    .mobile-menu-btn.active span:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .mobile-menu-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-menu-btn.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* ========================================
+       背景装饰
+       ======================================== */
+    .bg-gradient-orb {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .bg-gradient-1 {
+      top: -200px;
+      right: -200px;
+      background: radial-gradient(circle, rgba(224, 30, 90, 0.4) 0%, transparent 70%);
+    }
+
+    .bg-gradient-2 {
+      bottom: -200px;
+      left: -200px;
+      background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
+    }
+
+    /* ========================================
+       响应式设计
+       ======================================== */
+    @media (max-width: 1024px) {
+      :root {
+        --spacing-section: 100px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+        min-height: auto;
+        padding-top: var(--spacing-2xl);
+      }
+
+      .hero-visual {
+        height: 400px;
+      }
+
+      .section-title {
+        font-size: 40px;
+      }
+
+      .bento-large,
+      .bento-medium,
+      .bento-small {
+        grid-column: span 12;
+      }
+
+      .workflow-timeline {
+        padding-left: var(--spacing-lg);
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --spacing-section: 80px;
+        --spacing-lg: 24px;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--glass-border);
+        flex-direction: column;
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .hero {
+        padding-top: var(--spacing-xl);
+      }
+
+      .hero h1 {
+        font-size: 48px;
+      }
+
+      .hero .subtitle {
+        font-size: 18px;
+      }
+
+      .hero-visual {
+        height: 300px;
+      }
+
+      .hero-stats {
+        position: static;
+        margin-top: var(--spacing-md);
+      }
+
+      .section-title {
+        font-size: 32px;
+      }
+
+      .stat-card {
+        flex: 0 0 240px;
+      }
+
+      .workflow-container {
+        padding: var(--spacing-lg);
+      }
+
+      .newsletter {
+        padding: var(--spacing-xl) var(--spacing-md);
+      }
+
+      .newsletter h3 {
+        font-size: 32px;
+      }
+    }
+
+    /* ========================================
+       性能优化 - prefers-reduced-motion
+       ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ========================================
+       滚动动画触发
+       ======================================== */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- 滚动进度条 -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- 背景渐变装饰 -->
+  <div class="bg-gradient-orb bg-gradient-1"></div>
+  <div class="bg-gradient-orb bg-gradient-2"></div>
+
+  <!-- 滚动公告栏 -->
+  <div class="announcement-bar">
+    <div class="announcement-content">
+      <span class="announcement-text">🚀 发现下一个爆款创作者</span>
+      <span class="announcement-text">📊 AI驱动数据分析</span>
+      <span class="announcement-text">⚡ 智能API池管理</span>
+      <span class="announcement-text">🎯 精准对标监控</span>
+      <span class="announcement-text">🚀 发现下一个爆款创作者</span>
+      <span class="announcement-text">📊 AI驱动数据分析</span>
+      <span class="announcement-text">⚡ 智能API池管理</span>
+      <span class="announcement-text">🎯 精准对标监控</span>
+    </div>
+  </div>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="logo">PHANTOM RADAR</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#features">核心功能</a></li>
+        <li><a href="#workflow">工作流程</a></li>
+        <li><a href="#tools">工具集</a></li>
+        <li><a href="#docs">文档</a></li>
+      </ul>
+      <a href="API池管理工具.html" class="nav-cta">开始使用</a>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO 区 - 左右分屏 -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">AI 驱动的数据分析</div>
+      <h1>
+        <span class="gradient-text">发现下一个</span><br>
+        <span class="highlight">爆款创作者</span>
+      </h1>
+      <p class="subtitle">
+        专业的 YouTube 数据分析工具集，精准挖掘低粉爆款、实时监控视频数据，让数据驱动你的内容策略
+      </p>
+      <div class="hero-buttons">
+        <a href="01 低粉爆款挖掘.html" class="btn btn-primary">
+          🎯 开始挖掘爆款
+        </a>
+        <a href="#features" class="btn btn-secondary">
+          了解更多 →
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-visual-inner">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stats-item">
+          <div class="hero-stats-icon">⚡</div>
+          <div class="hero-stats-text">
+            <div class="hero-stats-label">API 自动切换</div>
+            <div class="hero-stats-value">智能池化</div>
+          </div>
+        </div>
+        <div class="hero-stats-item">
+          <div class="hero-stats-icon">🔒</div>
+          <div class="hero-stats-text">
+            <div class="hero-stats-label">数据安全</div>
+            <div class="hero-stats-value">本地存储</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 统计数据 - 横向滚动 -->
+  <section class="stats">
+    <div class="stats-scroll-container">
+      <div class="stat-card">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">专业工具</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">API 自动切换</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">本地存储</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">实时监控</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心功能 - Bento Grid -->
+  <section class="section fade-in" id="features">
+    <div class="section-header">
+      <span class="section-label">核心功能</span>
+      <h2 class="section-title">一站式 YouTube 数据分析解决方案</h2>
+      <p class="section-description">
+        从爆款挖掘到对标监控，PHANTOM RADAR 提供完整的工具链
+      </p>
+    </div>
+
+    <div class="bento-grid">
+      <div class="bento-item bento-large" onclick="location.href='01 低粉爆款挖掘.html'">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">低粉爆款挖掘</h3>
+        <p class="feature-description">
+          智能筛选订阅数少但播放量高的潜力创作者，精准定位"小而美"内容
+        </p>
+        <a href="01 低粉爆款挖掘.html" class="feature-link">
+          立即挖掘 →
+        </a>
+      </div>
+
+      <div class="bento-item bento-large" onclick="location.href='02 YouTube博主管理工具.html'">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">博主管理系统</h3>
+        <p class="feature-description">
+          批量导入频道ID，标签分类管理，数据导出备份，对标清单井井有条
+        </p>
+        <a href="02 YouTube博主管理工具.html" class="feature-link">
+          开始管理 →
+        </a>
+      </div>
+
+      <div class="bento-item bento-medium" onclick="location.href='03 视频监控工具.html'">
+        <div class="feature-icon">📹</div>
+        <h3 class="feature-title">视频实时监控</h3>
+        <p class="feature-description">
+          批量监控对标博主最新上传，多维度排序，洞察趋势
+        </p>
+        <a href="03 视频监控工具.html" class="feature-link">
+          开启监控 →
+        </a>
+      </div>
+
+      <div class="bento-item bento-medium" onclick="location.href='04 标签管理工具.html'">
+        <div class="feature-icon">🏷️</div>
+        <h3 class="feature-title">标签管理中心</h3>
+        <p class="feature-description">
+          统一管理标签，支持重命名、合并、批量操作
+        </p>
+        <a href="04 标签管理工具.html" class="feature-link">
+          管理标签 →
+        </a>
+      </div>
+
+      <div class="bento-item bento-medium" onclick="location.href='API池管理工具.html'">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">智能 API 池</h3>
+        <p class="feature-description">
+          配额检测、自动切换、失败重试，服务不中断
+        </p>
+        <a href="API池管理工具.html" class="feature-link">
+          配置 API →
+        </a>
+      </div>
+
+      <div class="bento-item bento-medium">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">本地优先存储</h3>
+        <p class="feature-description">
+          数据存储在本地 IndexedDB，保护隐私和安全
+        </p>
+        <a href="utilities/存储状态检查.html" class="feature-link">
+          检查存储 →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 工作流程 - 垂直时间轴 -->
+  <section class="section fade-in" id="workflow">
+    <div class="section-header">
+      <span class="section-label">工作流程</span>
+      <h2 class="section-title">四步完成从发现到监控</h2>
+      <p class="section-description">
+        简单高效的工作流程，快速上手数据分析
+      </p>
+    </div>
+
+    <div class="workflow-container">
+      <div class="workflow-timeline">
+        <div class="workflow-step">
+          <div class="step-marker">0</div>
+          <div class="step-content">
+            <h4 class="step-title">配置 API 池</h4>
+            <p class="step-description">
+              添加 1-5 个 YouTube API Key，开启智能自动切换，确保服务稳定运行
+            </p>
+          </div>
+        </div>
+
+        <div class="workflow-step">
+          <div class="step-marker">1</div>
+          <div class="step-content">
+            <h4 class="step-title">挖掘爆款创作者</h4>
+            <p class="step-description">
+              通过关键词和标签筛选，发现潜力博主，导出优质频道列表
+            </p>
+          </div>
+        </div>
+
+        <div class="workflow-step">
+          <div class="step-marker">2</div>
+          <div class="step-content">
+            <h4 class="step-title">管理对标清单</h4>
+            <p class="step-description">
+              批量导入频道，使用标签分类整理，定期刷新数据
+            </p>
+          </div>
+        </div>
+
+        <div class="workflow-step">
+          <div class="step-marker">3</div>
+          <div class="step-content">
+            <h4 class="step-title">监控视频数据</h4>
+            <p class="step-description">
+              批量获取最新视频，按观看量、互动率等指标排序，洞察内容趋势
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: var(--spacing-xl);">
+        <a href="01 低粉爆款挖掘.html" class="btn btn-primary">立即开始 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 工具集 -->
+  <section class="section fade-in" id="tools">
+    <div class="section-header">
+      <span class="section-label">工具集</span>
+      <h2 class="section-title">完整的工具生态系统</h2>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card">
+        <h3 class="feature-title">🛠️ 诊断修复工具</h3>
+        <p class="feature-description">
+          一键诊断系统状态，快速修复常见问题
+        </p>
+        <a href="utilities/快速修复工具.html" class="feature-link">
+          打开工具 →
+        </a>
+      </div>
+
+      <div class="tool-card">
+        <h3 class="feature-title">📦 存储状态检查</h3>
+        <p class="feature-description">
+          查看浏览器存储使用情况，管理本地数据
+        </p>
+        <a href="utilities/存储状态检查.html" class="feature-link">
+          检查存储 →
+        </a>
+      </div>
+
+      <div class="tool-card">
+        <h3 class="feature-title">🎨 设计系统预览</h3>
+        <p class="feature-description">
+          查看 Persona5 Refined 设计系统的完整组件
+        </p>
+        <a href="utilities/设计预览.html" class="feature-link">
+          查看设计 →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 订阅通知 -->
+  <section class="section fade-in">
+    <div class="newsletter">
+      <h3>保持更新</h3>
+      <p>订阅获取最新功能更新和使用技巧</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('感谢订阅！此功能即将推出。');">
+        <input type="email" class="newsletter-input" placeholder="输入你的邮箱地址" required>
+        <button type="submit" class="newsletter-button">订阅</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 文档链接 -->
+  <section class="section fade-in" id="docs">
+    <div class="section-header">
+      <span class="section-label">文档中心</span>
+      <h2 class="section-title">完整的文档和指南</h2>
+      <p class="section-description">
+        从快速入门到高级配置，提供全面的使用文档
+      </p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm); justify-content: center;">
+      <a href="docs/快速入门指南.md" class="btn btn-secondary" target="_blank">📖 快速入门</a>
+      <a href="docs/快速入门-API配置.md" class="btn btn-secondary" target="_blank">🔧 API 配置</a>
+      <a href="docs/故障排除指南.md" class="btn btn-secondary" target="_blank">🛟 故障排除</a>
+      <a href="docs/更新日志-API池版本.md" class="btn btn-secondary" target="_blank">📝 更新日志</a>
+      <a href="docs/设计系统说明.md" class="btn btn-secondary" target="_blank">🎨 设计系统</a>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="01 低粉爆款挖掘.html">爆款挖掘</a>
+      <a href="02 YouTube博主管理工具.html">博主管理</a>
+      <a href="03 视频监控工具.html">视频监控</a>
+      <a href="04 标签管理工具.html">标签管理</a>
+      <a href="API池管理工具.html">API管理</a>
+      <a href="docs/README.md" target="_blank">文档</a>
+    </div>
+    <p>© 2025 PHANTOM RADAR · Persona5 Refined Design System</p>
+    <p style="margin-top: 10px;">
+      让数据驱动你的内容策略 · 发现下一个爆款创作者
+    </p>
+  </footer>
+
+  <script>
+    // ========================================
+    // 滚动进度条
+    // ========================================
+    const scrollProgress = document.getElementById('scrollProgress');
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+    });
+
+    // ========================================
+    // 导航栏滚动效果
+    // ========================================
+    const navbar = document.getElementById('navbar');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      
+      lastScroll = currentScroll;
+    });
+
+    // ========================================
+    // 移动端菜单切换
+    // ========================================
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      mobileMenuBtn.classList.toggle('active');
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        mobileMenuBtn.classList.remove('active');
+      });
+    });
+
+    // ========================================
+    // 平滑滚动
+    // ========================================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href.length > 1) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            const offsetTop = target.offsetTop - 80;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        }
+      });
+    });
+
+    // ========================================
+    // Intersection Observer - 滚动动画
+    // ========================================
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    // 观察所有需要动画的元素
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // 特别处理工作流程步骤
+    document.querySelectorAll('.workflow-step').forEach(el => {
+      observer.observe(el);
+    });
+
+    // ========================================
+    // 统计卡片横向滚动优化
+    // ========================================
+    const statsContainer = document.querySelector('.stats-scroll-container');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    if (statsContainer) {
+      statsContainer.addEventListener('mousedown', (e) => {
+        isDown = true;
+        statsContainer.style.cursor = 'grabbing';
+        startX = e.pageX - statsContainer.offsetLeft;
+        scrollLeft = statsContainer.scrollLeft;
+      });
+
+      statsContainer.addEventListener('mouseleave', () => {
+        isDown = false;
+        statsContainer.style.cursor = 'grab';
+      });
+
+      statsContainer.addEventListener('mouseup', () => {
+        isDown = false;
+        statsContainer.style.cursor = 'grab';
+      });
+
+      statsContainer.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - statsContainer.offsetLeft;
+        const walk = (x - startX) * 2;
+        statsContainer.scrollLeft = scrollLeft - walk;
+      });
+    }
+
+    // ========================================
+    // 性能优化 - 检测用户偏好
+    // ========================================
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      console.log('用户偏好减少动画，已禁用复杂动画');
+    }
+
+    // ========================================
+    // 页面加载完成后的初始化
+    // ========================================
+    window.addEventListener('load', () => {
+      // 为统计卡片添加 grab 光标
+      if (statsContainer) {
+        statsContainer.style.cursor = 'grab';
+      }
+
+      // 控制台彩蛋
+      console.log('%c🎯 PHANTOM RADAR', 'color: #e01e5a; font-size: 24px; font-weight: bold;');
+      console.log('%c让数据驱动你的内容策略', 'color: #00ff87; font-size: 14px;');
+    });
+  </script>
+</body>
+</html>

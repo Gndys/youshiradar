@@ -1,0 +1,2942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI RADAR - 发现下一个AI爆款创作者</title>
+  <meta name="description" content="3分钟挖掘100个AI潜力创作者，用数据降低你80%的试错成本。专业的YouTube AI领域低粉爆款挖掘工具。">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #e01e5a;
+      --primary-light: #ff3366;
+      --primary-dark: #c01848;
+      --secondary: #4a9eff;
+      --success: #36c959;
+      --warning: #ff9500;
+      --accent: #ffd23f;
+      --bg-dark: #0f1117;
+      --bg-card: #1a1d27;
+      --bg-card-hover: #22252f;
+      --text-primary: #ffffff;
+      --text-secondary: #d1d1db;
+      --text-muted: #8b8b98;
+      --border: rgba(255, 255, 255, 0.12);
+      --gradient-1: linear-gradient(135deg, #e01e5a, #ff3366);
+      --gradient-2: linear-gradient(135deg, #4a9eff, #00d4ff);
+      --gradient-3: linear-gradient(135deg, #ffd23f, #ff6b9d);
+      --gradient-success: linear-gradient(135deg, #36c959, #4ade80);
+      --gradient-warning: linear-gradient(135deg, #ff9500, #ffa726);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 40px rgba(224, 30, 90, 0.15);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s ease;
+    }
+
+    .navbar.scrolled {
+      background: rgba(10, 10, 15, 0.95);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-cta {
+      background: var(--gradient-1);
+      color: white !important;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(224, 30, 90, 0.4);
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 140px 40px 80px;
+    }
+
+    /* Radar Animation Background */
+    .radar-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .radar-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      animation: radarPulse 3s ease-out infinite;
+    }
+
+    .radar-circle:nth-child(1) {
+      width: 200px;
+      height: 200px;
+      animation-delay: 0s;
+    }
+
+    .radar-circle:nth-child(2) {
+      width: 400px;
+      height: 400px;
+      animation-delay: 0.5s;
+    }
+
+    .radar-circle:nth-child(3) {
+      width: 600px;
+      height: 600px;
+      animation-delay: 1s;
+    }
+
+    .radar-circle:nth-child(4) {
+      width: 800px;
+      height: 800px;
+      animation-delay: 1.5s;
+    }
+
+    @keyframes radarPulse {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+    }
+
+    .radar-line {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 400px;
+      background: linear-gradient(to bottom, var(--primary), transparent);
+      transform-origin: top center;
+      animation: radarSweep 4s linear infinite;
+    }
+
+    @keyframes radarSweep {
+      0% {
+        transform: translate(-50%, 0) rotate(0deg);
+      }
+      100% {
+        transform: translate(-50%, 0) rotate(360deg);
+      }
+    }
+
+    /* Gradient Orbs */
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .orb-1 {
+      top: 10%;
+      right: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(224, 30, 90, 0.2), transparent);
+    }
+
+    .orb-2 {
+      bottom: 10%;
+      left: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(74, 158, 255, 0.15), transparent);
+    }
+
+    .hero-content {
+      max-width: 900px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-label {
+      display: inline-block;
+      background: rgba(224, 30, 90, 0.15);
+      color: var(--primary-light);
+      padding: 8px 20px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+      border: 1px solid rgba(224, 30, 90, 0.3);
+    }
+
+    .hero h1 {
+      font-size: 82px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 32px;
+      letter-spacing: -2px;
+    }
+
+    .hero h1 .highlight {
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero .subtitle {
+      font-size: 24px;
+      color: var(--text-secondary);
+      margin-bottom: 48px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--gradient-1);
+      color: white;
+      padding: 20px 48px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 32px rgba(224, 30, 90, 0.3);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .hero-cta:hover::before {
+      left: 100%;
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 16px 48px rgba(224, 30, 90, 0.5);
+    }
+
+    .hero-cta:active {
+      transform: translateY(-2px) scale(0.98);
+    }
+
+    .cta-icon {
+      font-size: 24px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(4px);
+      }
+    }
+
+    .hero-meta {
+      margin-top: 48px;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-light);
+      display: block;
+      margin-bottom: 4px;
+      transition: transform 0.3s ease;
+    }
+
+    .hero-stat:hover .hero-stat-value {
+      transform: scale(1.1);
+    }
+
+    .hero-stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Channel Showcase Section */
+    .channel-showcase {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+
+    .showcase-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .channel-carousel-wrapper {
+      position: relative;
+      overflow: hidden;
+      margin: 0 -40px;
+      padding: 0 40px;
+    }
+
+    .channel-carousel {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 20px 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .channel-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .channel-card {
+      min-width: 380px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .channel-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: var(--gradient-1);
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .channel-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: transparent;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+    }
+
+    .channel-card:hover::before {
+      opacity: 0.3;
+    }
+
+    .channel-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+
+    .channel-card:hover .channel-avatar {
+      transform: scale(1.1);
+    }
+
+    .avatar-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .channel-info {
+      margin-bottom: 16px;
+    }
+
+    .channel-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .channel-subs {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .channel-video {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .video-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .video-stats {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-highlight {
+      color: var(--primary-light);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .channel-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .badge-ultra {
+      background: linear-gradient(135deg, rgba(224, 30, 90, 0.9), rgba(255, 51, 102, 0.9));
+      color: white;
+    }
+
+    .badge-potential {
+      background: linear-gradient(135deg, rgba(255, 210, 63, 0.9), rgba(255, 149, 0, 0.9));
+      color: white;
+    }
+
+    .badge-treasure {
+      background: linear-gradient(135deg, rgba(74, 158, 255, 0.9), rgba(0, 212, 255, 0.9));
+      color: white;
+    }
+
+    .carousel-hint {
+      text-align: center;
+      margin-top: 32px;
+      color: var(--text-muted);
+      font-size: 14px;
+      animation: hintBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes hintBounce {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(8px);
+      }
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 40px;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 60px;
+    }
+
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-size: 80px;
+      font-weight: 900;
+      color: var(--primary);
+      opacity: 0.1;
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(224, 30, 90, 0.3);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+    }
+
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .testimonial-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+
+    .testimonial-author {
+      flex: 1;
+    }
+
+    .testimonial-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .testimonial-channel {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .testimonial-quote {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .testimonial-metrics {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .testimonial-growth {
+      flex: 1;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .testimonial-growth strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 4px;
+    }
+
+    .testimonial-time {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+    }
+
+    /* Comparison Table */
+    .comparison-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+
+    .comparison-table {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 60px;
+    }
+
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison-table thead {
+      background: rgba(224, 30, 90, 0.1);
+    }
+
+    .comparison-table th {
+      padding: 24px;
+      text-align: left;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .comparison-table th:first-child {
+      width: 50%;
+      color: var(--text-muted);
+    }
+
+    .comparison-table th:last-child {
+      color: var(--primary-light);
+    }
+
+    .comparison-table td {
+      padding: 20px 24px;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table tbody tr {
+      transition: background 0.3s ease;
+    }
+
+    .comparison-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .comparison-negative {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .comparison-positive {
+      color: var(--success);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Section Styles */
+    .section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 40px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 80px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section-label {
+      display: inline-block;
+      background: rgba(224, 30, 90, 0.1);
+      color: var(--primary);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      border: 1px solid rgba(224, 30, 90, 0.2);
+    }
+
+    .section-title {
+      font-size: 56px;
+      font-weight: 900;
+      margin-bottom: 24px;
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+
+    .section-description {
+      font-size: 20px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Workflow Narrative - Three Acts */
+    .workflow-act {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-bottom: 120px;
+    }
+
+    .workflow-act:nth-child(even) {
+      direction: rtl;
+    }
+
+    .workflow-act:nth-child(even) > * {
+      direction: ltr;
+    }
+
+    .workflow-content {
+      position: relative;
+    }
+
+    .act-number {
+      font-size: 120px;
+      font-weight: 900;
+      color: var(--primary);
+      opacity: 0.1;
+      position: absolute;
+      top: -40px;
+      left: -20px;
+      line-height: 1;
+      z-index: 0;
+    }
+
+    .act-label {
+      display: inline-block;
+      background: rgba(224, 30, 90, 0.15);
+      color: var(--primary-light);
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .act-title {
+      font-size: 42px;
+      font-weight: 900;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .act-description {
+      font-size: 18px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .act-features {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+
+    .act-features li {
+      padding: 12px 0;
+      padding-left: 32px;
+      position: relative;
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .act-features li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .act-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      color: var(--text-primary);
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .act-cta:hover {
+      border-color: var(--primary);
+      background: rgba(224, 30, 90, 0.1);
+      transform: translateX(4px);
+    }
+
+    .workflow-visual {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .workflow-visual::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: var(--gradient-1);
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .workflow-visual:hover::before {
+      opacity: 0.2;
+    }
+
+    /* Mock Interface Elements */
+    .mock-interface {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mock-row {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: mockSlideIn 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .mock-row:nth-child(1) { animation-delay: 0.1s; }
+    .mock-row:nth-child(2) { animation-delay: 0.2s; }
+    .mock-row:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes mockSlideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+    }
+
+    .mock-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--gradient-1);
+      flex-shrink: 0;
+    }
+
+    .mock-content {
+      flex: 1;
+    }
+
+    .mock-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .mock-stats {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .mock-badge {
+      background: rgba(224, 30, 90, 0.2);
+      color: var(--primary-light);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* API Configuration Section */
+    .api-config {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 60px;
+      text-align: center;
+    }
+
+    .config-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 60px;
+      position: relative;
+    }
+
+    .config-steps::before {
+      content: '';
+      position: absolute;
+      top: 32px;
+      left: 20%;
+      right: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .config-step {
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-number {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      background: var(--gradient-1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 900;
+      box-shadow: 0 8px 24px rgba(224, 30, 90, 0.4);
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .step-description {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .config-reassurance {
+      margin-top: 48px;
+      padding: 24px;
+      background: rgba(74, 158, 255, 0.1);
+      border: 1px solid rgba(74, 158, 255, 0.2);
+      border-radius: 12px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    /* Feature Ecosystem */
+    .features-split {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient-1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient-1);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(224, 30, 90, 0.4);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-card:hover::after {
+      transform: scaleX(1);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      border-radius: 12px;
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.05) rotate(5deg);
+    }
+
+    .feature-card::after {
+      content: '→';
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      font-size: 24px;
+      color: var(--primary);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Icon Types - Main Features */
+    .icon-target {
+      background: var(--gradient-1);
+      box-shadow: 0 4px 16px rgba(224, 30, 90, 0.3);
+    }
+
+    .icon-target::before {
+      content: '';
+      width: 24px;
+      height: 24px;
+      border: 3px solid white;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .icon-target::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .icon-chart {
+      background: var(--gradient-2);
+      box-shadow: 0 4px 16px rgba(74, 158, 255, 0.3);
+    }
+
+    .icon-chart::before {
+      content: '';
+      width: 28px;
+      height: 20px;
+      background: linear-gradient(to bottom,
+        transparent 0%, transparent 40%,
+        white 40%, white 45%,
+        transparent 45%, transparent 60%,
+        white 60%, white 70%,
+        transparent 70%, transparent 80%,
+        white 80%, white 100%
+      );
+      background-size: 6px 100%;
+      background-repeat: repeat-x;
+      background-position: 0 100%;
+      position: absolute;
+      border-radius: 2px;
+    }
+
+    .icon-video {
+      background: var(--gradient-3);
+      box-shadow: 0 4px 16px rgba(255, 210, 63, 0.3);
+    }
+
+    .icon-video::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 14px solid white;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      position: absolute;
+      margin-left: 3px;
+    }
+
+    /* Icon Types - Supporting Tools */
+    .icon-tag {
+      background: linear-gradient(135deg, #ff6b9d, #c01848);
+      box-shadow: 0 4px 16px rgba(255, 107, 157, 0.3);
+    }
+
+    .icon-tag::before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      background: transparent;
+      border: 3px solid white;
+      border-radius: 3px;
+      transform: rotate(45deg);
+      position: absolute;
+    }
+
+    .icon-tag::after {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 18px;
+      left: 18px;
+    }
+
+    .icon-lightning {
+      background: linear-gradient(135deg, #ffd23f, #ff9500);
+      box-shadow: 0 4px 16px rgba(255, 210, 63, 0.4);
+    }
+
+    .icon-lightning::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 14px solid white;
+      position: absolute;
+      top: 14px;
+    }
+
+    .icon-lightning::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 14px solid white;
+      position: absolute;
+      bottom: 14px;
+    }
+
+    .icon-wrench {
+      background: linear-gradient(135deg, #4a9eff, #2d7dd2);
+      box-shadow: 0 4px 16px rgba(74, 158, 255, 0.4);
+    }
+
+    .icon-wrench::before {
+      content: '';
+      width: 20px;
+      height: 4px;
+      background: white;
+      border-radius: 2px;
+      position: absolute;
+      transform: rotate(-45deg);
+    }
+
+    .icon-wrench::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: transparent;
+      border: 3px solid white;
+      border-radius: 2px;
+      position: absolute;
+      top: 20px;
+      left: 12px;
+      transform: rotate(-45deg);
+    }
+
+    .icon-database {
+      background: linear-gradient(135deg, #00d4ff, #0099cc);
+      box-shadow: 0 4px 16px rgba(0, 212, 255, 0.4);
+    }
+
+    .icon-database::before {
+      content: '';
+      width: 24px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 16px;
+    }
+
+    .icon-database::after {
+      content: '';
+      width: 24px;
+      height: 12px;
+      border: 2px solid white;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      position: absolute;
+      bottom: 14px;
+    }
+
+    .icon-shield {
+      background: linear-gradient(135deg, #36c959, #28a745);
+      box-shadow: 0 4px 16px rgba(54, 201, 89, 0.4);
+    }
+
+    .icon-shield::before {
+      content: '';
+      width: 20px;
+      height: 24px;
+      background: transparent;
+      border: 3px solid white;
+      border-radius: 3px 3px 10px 10px;
+      position: absolute;
+    }
+
+    .icon-shield::after {
+      content: '';
+      width: 6px;
+      height: 10px;
+      border-right: 3px solid white;
+      border-bottom: 3px solid white;
+      position: absolute;
+      top: 17px;
+      transform: rotate(45deg);
+    }
+
+    .icon-book {
+      background: linear-gradient(135deg, #9b59b6, #8e44ad);
+      box-shadow: 0 4px 16px rgba(155, 89, 182, 0.4);
+    }
+
+    .icon-book::before {
+      content: '';
+      width: 20px;
+      height: 26px;
+      background: transparent;
+      border: 3px solid white;
+      border-radius: 2px;
+      position: absolute;
+    }
+
+    .icon-book::after {
+      content: '';
+      width: 2px;
+      height: 26px;
+      background: white;
+      position: absolute;
+      left: 21px;
+    }
+
+    .feature-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .feature-description {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    .feature-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      margin-top: auto;
+    }
+
+    .feature-link:hover {
+      gap: 12px;
+      color: var(--primary-light);
+    }
+
+    /* Supporting Tools - Collapsible */
+    .supporting-tools {
+      margin-top: 40px;
+    }
+
+    .tools-toggle {
+      text-align: center;
+    }
+
+    .toggle-btn {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: var(--text-secondary);
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn:hover {
+      border-color: var(--primary);
+      color: var(--text-primary);
+    }
+
+    .tools-collapsible {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      margin-top: 0;
+    }
+
+    .tools-collapsible.expanded {
+      max-height: 1000px;
+      margin-top: 40px;
+    }
+
+    .supporting-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .supporting-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+    }
+
+    .supporting-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--gradient-2);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .supporting-card:hover {
+      border-color: rgba(74, 158, 255, 0.3);
+      background: var(--bg-card-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .supporting-card:hover::after {
+      transform: scaleX(1);
+    }
+
+    .supporting-card:hover .feature-icon {
+      transform: scale(1.05);
+    }
+
+    .supporting-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.2px;
+    }
+
+    .supporting-description {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+      line-height: 1.7;
+      flex-grow: 1;
+    }
+
+    /* Final CTA Section */
+    .final-cta {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 32px;
+      padding: 80px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(224, 30, 90, 0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .final-cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .final-cta h2 {
+      font-size: 52px;
+      font-weight: 900;
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+
+    .final-cta p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 48px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .final-cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-large {
+      padding: 20px 48px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+      box-shadow: 0 8px 32px rgba(224, 30, 90, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(224, 30, 90, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      background: rgba(224, 30, 90, 0.1);
+    }
+
+    /* Footer */
+    .footer {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 60px 40px 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand {
+      max-width: 300px;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .footer-tagline {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .footer-section h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+
+    .footer-bottom {
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .mobile-menu-btn span {
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all 0.3s ease;
+      border-radius: 2px;
+    }
+
+    .mobile-menu-btn.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .mobile-menu-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-menu-btn.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .workflow-act {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .workflow-act:nth-child(even) {
+        direction: ltr;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .features-split {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+      }
+
+      .supporting-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(20, 20, 25, 0.98);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        padding: 24px;
+        gap: 20px;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .hero {
+        padding: 120px 24px 60px;
+        min-height: auto;
+      }
+
+      .hero h1 {
+        font-size: 48px;
+      }
+
+      .hero .subtitle {
+        font-size: 18px;
+      }
+
+      .radar-container {
+        width: 400px;
+        height: 400px;
+      }
+
+      .channel-showcase {
+        padding: 60px 24px;
+      }
+
+      .channel-carousel-wrapper {
+        margin: 0 -24px;
+        padding: 0 24px;
+      }
+
+      .channel-card {
+        min-width: 300px;
+        padding: 24px;
+      }
+
+      .channel-avatar {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 16px;
+      }
+
+      .avatar-text {
+        font-size: 16px;
+      }
+
+      .channel-name {
+        font-size: 18px;
+      }
+
+      .video-title {
+        font-size: 14px;
+      }
+
+      .carousel-hint {
+        font-size: 13px;
+      }
+
+      .section {
+        padding: 60px 24px;
+      }
+
+      .section-title {
+        font-size: 36px;
+      }
+
+      .config-steps {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .config-steps::before {
+        display: none;
+      }
+
+      .features-split,
+      .supporting-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-card {
+        padding: 32px 24px;
+        min-height: auto;
+      }
+
+      .supporting-card {
+        padding: 28px 20px;
+        min-height: auto;
+      }
+
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 20px;
+      }
+
+      .api-config {
+        padding: 40px 24px;
+      }
+
+      .final-cta {
+        padding: 60px 24px;
+      }
+
+      .final-cta h2 {
+        font-size: 36px;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .act-number {
+        font-size: 80px;
+        top: -20px;
+        left: -10px;
+      }
+
+      .act-title {
+        font-size: 32px;
+      }
+    }
+
+    /* Utility Classes */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="logo">AI RADAR</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#features">核心功能</a></li>
+        <li><a href="API池管理工具.html" class="nav-cta">开始使用</a></li>
+      </ul>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    
+    <div class="radar-container">
+      <div class="radar-circle"></div>
+      <div class="radar-circle"></div>
+      <div class="radar-circle"></div>
+      <div class="radar-circle"></div>
+      <div class="radar-line"></div>
+    </div>
+
+    <div class="hero-content">
+      <span class="hero-label">专为 AI 领域打造</span>
+      <h1>
+        在3分钟内找到100个<br>
+        <span class="highlight">被低估的 AI 创作者</span>
+      </h1>
+      <p class="subtitle">
+        想学习 AI 但不知道关注谁？发现那些深耕 AI 但还未被发现的宝藏博主。<br>
+        从 ChatGPT 到 Stable Diffusion，用数据找到最优质的 AI 学习资源。
+      </p>
+      <a href="01 低粉爆款挖掘.html" class="hero-cta">
+        开始发现 AI 潜力频道
+        <span class="cta-icon">→</span>
+      </a>
+      
+      <div class="hero-meta">
+        <div class="hero-stat">
+          <span class="hero-stat-value">1,247+</span>
+          <span class="hero-stat-label">AI 创作者正在使用</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">8,392</span>
+          <span class="hero-stat-label">AI 频道已发现</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">12,500小时</span>
+          <span class="hero-stat-label">AI 学习时间节省</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Channel Showcase Section -->
+  <section class="channel-showcase">
+    <div class="showcase-header fade-in">
+      <span class="section-label">真实案例</span>
+      <h2 class="section-title">这些 AI 创作者也曾和你一样迷茫</h2>
+      <p class="section-description">
+        他们从低粉起步，在 AI 领域找到了自己的赛道。<br>
+        看看这些深耕 AI 的博主是怎么做到的。
+      </p>
+    </div>
+
+    <div class="channel-carousel-wrapper fade-in">
+      <div class="channel-carousel" id="channelCarousel">
+        <!-- Channel Card 1 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=小林AI工具&size=72&background=667eea&color=fff&bold=true&rounded=true" 
+               alt="小林AI工具">
+          <div class="channel-info">
+            <h3 class="channel-name">小林AI工具测评</h3>
+            <div class="channel-subs">从 800 → 3.2万订阅 <span style="color: var(--success); font-weight: 600;">(+3900%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">GPT-4 vs Claude 3.5：10个实战场景深度对比 · 突破视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">280万</span> 播放 · 
+                <span>12K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">6个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-ultra">🚀 新星</div>
+        </div>
+
+        <!-- Channel Card 2 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=阿美AI课堂&size=72&background=f093fb&color=fff&bold=true&rounded=true" 
+               alt="阿美AI课堂">
+          <div class="channel-info">
+            <h3 class="channel-name">阿美的AI入门课堂</h3>
+            <div class="channel-subs">从 1.2K → 5.8万订阅 <span style="color: var(--success); font-weight: 600;">(+4733%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">零基础5分钟学会 Stable Diffusion · 爆款视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">156万</span> 播放 · 
+                <span>8.9K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">4个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-potential">💎 宝藏</div>
+        </div>
+
+        <!-- Channel Card 3 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=阿杰AI开发&size=72&background=4facfe&color=fff&bold=true&rounded=true" 
+               alt="阿杰AI开发">
+          <div class="channel-info">
+            <h3 class="channel-name">阿杰的AI游戏开发</h3>
+            <div class="channel-subs">从 2.5K → 7.1万订阅 <span style="color: var(--success); font-weight: 600;">(+2740%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">用ChatGPT写了一个完整游戏！AI编程实战 · 突破视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">420万</span> 播放 · 
+                <span>18K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">3个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-ultra">🔥 爆发中</div>
+        </div>
+
+        <!-- Channel Card 4 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=小王AI周报&size=72&background=fa709a&color=fff&bold=true&rounded=true" 
+               alt="小王AI周报">
+          <div class="channel-info">
+            <h3 class="channel-name">小王的AI资讯周报</h3>
+            <div class="channel-subs">从 600 → 2.4万订阅 <span style="color: var(--success); font-weight: 600;">(+3900%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">OpenAI最新发布会全解读：15个重磅功能 · 突破视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">195万</span> 播放 · 
+                <span>11K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">2个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-treasure">⚡ 黑马</div>
+        </div>
+
+        <!-- Channel Card 5 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=张老师深度学习&size=72&background=30cfd0&color=fff&bold=true&rounded=true" 
+               alt="张老师深度学习">
+          <div class="channel-info">
+            <h3 class="channel-name">张老师深度学习课堂</h3>
+            <div class="channel-subs">从 1.8K → 4.5万订阅 <span style="color: var(--success); font-weight: 600;">(+2400%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">Transformer模型到底是什么？零基础图解 · 爆款视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">312万</span> 播放 · 
+                <span>24K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">5个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-ultra">🚀 新星</div>
+        </div>
+
+        <!-- Channel Card 6 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=老李Prompt&size=72&background=a8edea&color=333&bold=true&rounded=true" 
+               alt="老李Prompt">
+          <div class="channel-info">
+            <h3 class="channel-name">老李的Prompt工程</h3>
+            <div class="channel-subs">从 450 → 1.8万订阅 <span style="color: var(--success); font-weight: 600;">(+3900%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">ChatGPT提示词终极指南：从入门到精通 · 突破视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">520万</span> 播放 · 
+                <span>32K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">1个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-ultra">⚡ 黑马</div>
+        </div>
+
+        <!-- Channel Card 7 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=AI副业小白&size=72&background=ff9a9e&color=fff&bold=true&rounded=true" 
+               alt="AI副业小白">
+          <div class="channel-info">
+            <h3 class="channel-name">AI副业的逆袭</h3>
+            <div class="channel-subs">从 3.1K → 6.3万订阅 <span style="color: var(--success); font-weight: 600;">(+1932%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">用AI工具每月多赚5000的8个副业 · 爆款视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">380万</span> 播放 · 
+                <span>15K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">7个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-potential">💎 宝藏</div>
+        </div>
+
+        <!-- Channel Card 8 -->
+        <div class="channel-card">
+          <img class="channel-avatar" 
+               src="https://ui-avatars.com/api/?name=设计师AI助手&size=72&background=ffecd2&color=333&bold=true&rounded=true" 
+               alt="设计师AI助手">
+          <div class="channel-info">
+            <h3 class="channel-name">设计师的AI助手</h3>
+            <div class="channel-subs">从 1.5K → 3.9万订阅 <span style="color: var(--success); font-weight: 600;">(+2500%)</span></div>
+            <div class="channel-video">
+              <div class="video-title">Midjourney+Figma：AI设计工作流完全指南 · 突破视频</div>
+              <div class="video-stats">
+                <span class="stat-highlight">228万</span> 播放 · 
+                <span>16K</span> 点赞 · 
+                <span style="color: var(--text-muted); font-size: 12px;">5个月前发现</span>
+              </div>
+            </div>
+          </div>
+          <div class="channel-badge badge-treasure">🔥 爆发中</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-hint fade-in">
+      <span>→ 滑动查看更多频道</span>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <div class="section-header fade-in">
+      <span class="section-label">真实反馈</span>
+      <h2 class="section-title">AI 学习者和创作者的真实反馈</h2>
+      <p class="section-description">
+        从AI小白到月入过万，让我们听听他们的故事
+      </p>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-header">
+          <img class="testimonial-avatar" 
+               src="https://ui-avatars.com/api/?name=王小明&size=56&background=667eea&color=fff&bold=true&rounded=true" 
+               alt="王小明">
+          <div class="testimonial-author">
+            <div class="testimonial-name">王小明</div>
+            <div class="testimonial-channel">AI工具评测 · 从0到8.5K订阅</div>
+          </div>
+        </div>
+        <div class="testimonial-quote">
+          "用这个工具3天找到52个AI对标频道，学习他们的选题和节奏。2周后我的AI工具评测视频观看量增长300%，终于找到了自己的内容方向。"
+        </div>
+        <div class="testimonial-metrics">
+          <div class="testimonial-growth">
+            <strong>1.2K → 8.5K</strong>
+            增长 +608%
+          </div>
+          <div class="testimonial-time">45天</div>
+        </div>
+      </div>
+
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-header">
+          <img class="testimonial-avatar" 
+               src="https://ui-avatars.com/api/?name=李小美&size=56&background=f093fb&color=fff&bold=true&rounded=true" 
+               alt="李小美">
+          <div class="testimonial-author">
+            <div class="testimonial-name">李小美</div>
+            <div class="testimonial-channel">AI教程博主 · 从500到2.3万订阅</div>
+          </div>
+        </div>
+        <div class="testimonial-quote">
+          "作为全职妈妈想做副业，但不知道怎么开始。通过监控AI对标博主，我发现了'AI+垂直领域'这个小众赛道，现在每月AI课程收入过万。"
+        </div>
+        <div class="testimonial-metrics">
+          <div class="testimonial-growth">
+            <strong>500 → 2.3万</strong>
+            增长 +4500%
+          </div>
+          <div class="testimonial-time">3个月</div>
+        </div>
+      </div>
+
+      <div class="testimonial-card fade-in">
+        <div class="testimonial-header">
+          <img class="testimonial-avatar" 
+               src="https://ui-avatars.com/api/?name=张大伟&size=56&background=4facfe&color=fff&bold=true&rounded=true" 
+               alt="张大伟">
+          <div class="testimonial-author">
+            <div class="testimonial-name">张大伟</div>
+            <div class="testimonial-channel">AI技能分享 · 从1K到1.8万订阅</div>
+          </div>
+        </div>
+        <div class="testimonial-quote">
+          "以前做AI视频全靠感觉，发了30个视频才100粉。用工具分析同赛道AI爆款后，第一个ChatGPT教程视频就破10万播放，2个月达到变现标准。"
+        </div>
+        <div class="testimonial-metrics">
+          <div class="testimonial-growth">
+            <strong>1K → 1.8万</strong>
+            增长 +1700%
+          </div>
+          <div class="testimonial-time">2个月</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow Narrative -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-label">被 1,247+ AI 创作者验证的工作流程</span>
+      <h2 class="section-title">从发现 AI 内容到变现的完整路径</h2>
+      <p class="section-description">
+        三步构建你的 AI 内容帝国，每一步都有数据支撑。<br>
+        <span style="color: var(--success); font-weight: 600;">89% 的AI创作者在30天内看到增长</span>
+      </p>
+    </div>
+
+    <!-- Act 1: Discover -->
+    <div class="workflow-act fade-in">
+      <div class="workflow-content">
+        <div class="act-number">01</div>
+        <span class="act-label">第一幕 · 发现</span>
+        <h3 class="act-title">精准挖掘AI潜力创作者</h3>
+        <p class="act-description">
+          不要在AI内容的海洋里盲目搜索。用AI相关关键词智能筛选，3分钟锁定100个低粉高播的AI创作者。
+        </p>
+        <ul class="act-features">
+          <li>订阅数 &lt;10万，但AI视频播放量破百万</li>
+          <li>多维度筛选：AI工具、教程、应用等细分领域</li>
+          <li>一键批量导出AI频道ID，无缝对接下一步</li>
+        </ul>
+        <div style="margin: 24px 0; padding: 16px; background: rgba(54, 201, 89, 0.1); border-left: 3px solid var(--success); border-radius: 8px;">
+          <div style="color: var(--success); font-weight: 600; font-size: 14px; margin-bottom: 4px;">✓ 平均成功率</div>
+          <div style="color: var(--text-secondary); font-size: 13px;">92% 的用户在这一步找到至少30个优质AI频道 · 传统搜索需要3小时，现在只需3分钟</div>
+        </div>
+        <a href="01 低粉爆款挖掘.html" class="act-cta">
+          立即挖掘 →
+        </a>
+      </div>
+      <div class="workflow-visual">
+        <div class="mock-interface">
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">AI工具测评 · 3.2万订阅</div>
+              <div class="mock-stats">最新视频：280万播放 · 12K点赞</div>
+            </div>
+            <div class="mock-badge">爆款</div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">AI教程频道 · 5.8万订阅</div>
+              <div class="mock-stats">最新视频：156万播放 · 8.9K点赞</div>
+            </div>
+            <div class="mock-badge">潜力</div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">AI开发实战 · 7.1万订阅</div>
+              <div class="mock-stats">最新视频：420万播放 · 18K点赞</div>
+            </div>
+            <div class="mock-badge">超爆</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Act 2: Manage -->
+    <div class="workflow-act fade-in">
+      <div class="workflow-content">
+        <div class="act-number">02</div>
+        <span class="act-label">第二幕 · 沉淀</span>
+        <h3 class="act-title">管理你的AI学习资源库</h3>
+        <p class="act-description">
+          挖掘只是开始。批量导入AI频道、按子领域分类、定期刷新，把零散的AI资源变成结构化的知识库。
+        </p>
+        <ul class="act-features">
+          <li>批量导入AI频道ID，自动去重整理</li>
+          <li>自定义标签：AI工具、教程、应用等细分领域</li>
+          <li>实时更新AI频道订阅数和最新视频数据</li>
+        </ul>
+        <div style="margin: 24px 0; padding: 16px; background: rgba(74, 158, 255, 0.1); border-left: 3px solid var(--secondary); border-radius: 8px;">
+          <div style="color: var(--secondary); font-weight: 600; font-size: 14px; margin-bottom: 4px;">✓ 用户平均数据</div>
+          <div style="color: var(--text-secondary); font-size: 13px;">每个用户管理67个AI对标频道 · 85% 的用户每周刷新数据追踪增长</div>
+        </div>
+        <a href="02 YouTube博主管理工具.html" class="act-cta">
+          开始管理 →
+        </a>
+      </div>
+      <div class="workflow-visual">
+        <div class="mock-interface">
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">AI工具测评 · 12个频道</div>
+              <div class="mock-stats">平均增长率：+23% · 活跃度：高</div>
+            </div>
+            <div class="mock-badge">分类</div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">AI教程课程 · 8个频道</div>
+              <div class="mock-stats">平均增长率：+18% · 活跃度：中</div>
+            </div>
+            <div class="mock-badge">分类</div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">AI应用开发 · 15个频道</div>
+              <div class="mock-stats">平均增长率：+31% · 活跃度：高</div>
+            </div>
+            <div class="mock-badge">分类</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Act 3: Monitor -->
+    <div class="workflow-act fade-in">
+      <div class="workflow-content">
+        <div class="act-number">03</div>
+        <span class="act-label">第三幕 · 监控</span>
+        <h3 class="act-title">实时追踪AI内容趋势</h3>
+        <p class="act-description">
+          别等AI爆款凉了才发现。批量监控AI博主最新上传，第一时间看到什么AI工具在涨，什么AI选题正在起飞。
+        </p>
+        <ul class="act-features">
+          <li>批量获取AI频道最新视频，一键刷新全部数据</li>
+          <li>多维度排序：观看量、点赞数、互动率</li>
+          <li>趋势对比：看清楚哪些AI选题正在起飞</li>
+        </ul>
+        <div style="margin: 24px 0; padding: 16px; background: rgba(255, 149, 0, 0.1); border-left: 3px solid var(--warning); border-radius: 8px;">
+          <div style="color: var(--warning); font-weight: 600; font-size: 14px; margin-bottom: 4px;">✓ 实时洞察</div>
+          <div style="color: var(--text-secondary); font-size: 13px;">78% 的用户通过监控发现了AI新选题方向 · 比竞争对手提前24-48小时发现AI趋势</div>
+        </div>
+        <a href="03 视频监控工具.html" class="act-cta">
+          开启监控 →
+        </a>
+      </div>
+      <div class="workflow-visual">
+        <div class="mock-interface">
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">Claude 3.5最新功能测评 · 2小时前</div>
+              <div class="mock-stats">89K观看 · 互动率 8.2%</div>
+            </div>
+            <div class="mock-badge">🔥趋势</div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">提升10倍效率的AI工具 · 5小时前</div>
+              <div class="mock-stats">124K观看 · 互动率 9.1%</div>
+            </div>
+            <div class="mock-badge">🔥趋势</div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-avatar"></div>
+            <div class="mock-content">
+              <div class="mock-title">用AI做副业月入过万 · 8小时前</div>
+              <div class="mock-stats">203K观看 · 互动率 12.3%</div>
+            </div>
+            <div class="mock-badge">💥爆款</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section class="comparison-section">
+    <div class="section-header fade-in">
+      <span class="section-label">为什么选择我们</span>
+      <h2 class="section-title">告别低效的AI资源搜索</h2>
+      <p class="section-description">
+        用数据说话，看看AI RADAR能为你节省多少时间
+      </p>
+    </div>
+
+    <div class="comparison-table fade-in">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>手动搜索</th>
+            <th>AI RADAR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: var(--text-primary); font-weight: 600;">⏱️ 时间成本</td>
+            <td><span class="comparison-negative">❌ 3-5小时筛选AI频道</span></td>
+            <td><span class="comparison-positive">✅ 3分钟智能挖掘100个AI频道</span></td>
+          </tr>
+          <tr>
+            <td style="color: var(--text-primary); font-weight: 600;">🎯 发现效率</td>
+            <td><span class="comparison-negative">❌ 容易遗漏宝藏频道</span></td>
+            <td><span class="comparison-positive">✅ 多维度自动筛选不遗漏</span></td>
+          </tr>
+          <tr>
+            <td style="color: var(--text-primary); font-weight: 600;">📊 数据管理</td>
+            <td><span class="comparison-negative">❌ 数据分散难以追踪</span></td>
+            <td><span class="comparison-positive">✅ 结构化知识库统一管理</span></td>
+          </tr>
+          <tr>
+            <td style="color: var(--text-primary); font-weight: 600;">🔔 实时监控</td>
+            <td><span class="comparison-negative">❌ 手动刷新效率低下</span></td>
+            <td><span class="comparison-positive">✅ 一键批量刷新自动追踪</span></td>
+          </tr>
+          <tr>
+            <td style="color: var(--text-primary); font-weight: 600;">💰 使用成本</td>
+            <td><span class="comparison-negative">❌ 需要购买第三方工具</span></td>
+            <td><span class="comparison-positive">✅ 免费API配额完全够用</span></td>
+          </tr>
+          <tr>
+            <td style="color: var(--text-primary); font-weight: 600;">🔒 数据安全</td>
+            <td><span class="comparison-negative">❌ 依赖第三方服务器</span></td>
+            <td><span class="comparison-positive">✅ 本地存储保护隐私</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- API Configuration Section -->
+  <section class="section">
+    <div class="api-config fade-in">
+      <span class="section-label">前置准备</span>
+      <h2 class="section-title">30秒完成配置，终身受益</h2>
+      <p class="section-description">
+        只需配置一次API，后续所有工具自动工作
+      </p>
+
+      <div class="config-steps">
+        <div class="config-step">
+          <div class="step-number">1</div>
+          <h4 class="step-title">获取API密钥</h4>
+          <p class="step-description">
+            访问Google Cloud，免费申请YouTube Data API v3密钥
+          </p>
+        </div>
+        <div class="config-step">
+          <div class="step-number">2</div>
+          <h4 class="step-title">添加到API池</h4>
+          <p class="step-description">
+            在API池管理工具中添加1-5个密钥，支持批量导入
+          </p>
+        </div>
+        <div class="config-step">
+          <div class="step-number">3</div>
+          <h4 class="step-title">自动切换运行</h4>
+          <p class="step-description">
+            配额用完自动切换，所有工具无缝使用，零中断
+          </p>
+        </div>
+      </div>
+
+      <div class="config-reassurance">
+        <strong>免费配额足够日常使用</strong> · 每个API每天10,000配额 · 支持5个密钥轮换 = 每天50,000次调用
+      </div>
+
+      <div style="margin-top: 40px;">
+        <a href="API池管理工具.html" class="btn-large btn-primary">
+          前往配置API →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Ecosystem -->
+  <section class="section" id="features">
+    <div class="section-header">
+      <span class="section-label">完整工具集</span>
+      <h2 class="section-title">专为AI领域打造的完整工具集</h2>
+      <p class="section-description">
+        不再迷茫，不再试错。用数据追踪AI趋势，让AI学习可复制。
+      </p>
+    </div>
+
+    <div class="features-split">
+      <div class="feature-card fade-in">
+        <div class="feature-icon icon-target"></div>
+        <h3 class="feature-title">发现宝藏AI创作者</h3>
+        <p class="feature-description">
+          还在为找不到优质AI学习资源发愁？发现那些深耕AI但还未被发现的宝藏博主，学习他们的成功路径
+        </p>
+        <a href="01 低粉爆款挖掘.html" class="feature-link">
+          开始挖掘 →
+        </a>
+      </div>
+
+      <div class="feature-card fade-in">
+        <div class="feature-icon icon-chart"></div>
+        <h3 class="feature-title">建立AI学习资源库</h3>
+        <p class="feature-description">
+          把零散的AI资源变成结构化知识库，随时追踪AI对标博主的成长轨迹和最新内容
+        </p>
+        <a href="02 YouTube博主管理工具.html" class="feature-link">
+          开始管理 →
+        </a>
+      </div>
+
+      <div class="feature-card fade-in">
+        <div class="feature-icon icon-video"></div>
+        <h3 class="feature-title">抢先发现AI趋势</h3>
+        <p class="feature-description">
+          别等AI爆款凉了才跟风。比竞争对手提前24-48小时发现什么AI工具、什么AI选题正在起飞
+        </p>
+        <a href="03 视频监控工具.html" class="feature-link">
+          开启监控 →
+        </a>
+      </div>
+    </div>
+
+    <div class="supporting-tools">
+      <div class="tools-toggle">
+        <button class="toggle-btn" id="toggleTools">
+          查看更多工具 ↓
+        </button>
+      </div>
+
+      <div class="tools-collapsible" id="toolsCollapsible">
+        <div class="supporting-grid">
+          <div class="supporting-card">
+            <div class="feature-icon icon-tag"></div>
+            <h4 class="supporting-title">标签管理中心</h4>
+            <p class="supporting-description">
+              统一管理所有标签，支持重命名、合并、批量操作
+            </p>
+            <a href="04 标签管理工具.html" class="feature-link">
+              管理标签 →
+            </a>
+          </div>
+
+          <div class="supporting-card">
+            <div class="feature-icon icon-lightning"></div>
+            <h4 class="supporting-title">智能API池</h4>
+            <p class="supporting-description">
+              配额检测、自动切换、失败重试，确保服务不中断
+            </p>
+            <a href="API池管理工具.html" class="feature-link">
+              配置API →
+            </a>
+          </div>
+
+          <div class="supporting-card">
+            <div class="feature-icon icon-wrench"></div>
+            <h4 class="supporting-title">诊断修复工具</h4>
+            <p class="supporting-description">
+              一键诊断系统状态，快速修复常见问题
+            </p>
+            <a href="utilities/快速修复工具.html" class="feature-link">
+              打开工具 →
+            </a>
+          </div>
+
+          <div class="supporting-card">
+            <div class="feature-icon icon-database"></div>
+            <h4 class="supporting-title">存储状态检查</h4>
+            <p class="supporting-description">
+              查看浏览器存储使用情况，管理本地数据
+            </p>
+            <a href="utilities/存储状态检查.html" class="feature-link">
+              检查存储 →
+            </a>
+          </div>
+
+          <div class="supporting-card">
+            <div class="feature-icon icon-shield"></div>
+            <h4 class="supporting-title">本地优先存储</h4>
+            <p class="supporting-description">
+              所有数据存储在本地IndexedDB，保护隐私安全
+            </p>
+            <a href="utilities/存储状态检查.html" class="feature-link">
+              了解更多 →
+            </a>
+          </div>
+
+          <div class="supporting-card">
+            <div class="feature-icon icon-book"></div>
+            <h4 class="supporting-title">完整文档</h4>
+            <p class="supporting-description">
+              从快速入门到高级配置，提供全面使用指南
+            </p>
+            <a href="docs/快速入门指南.md" class="feature-link" target="_blank">
+              查看文档 →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="section">
+    <div class="final-cta fade-in">
+      <div class="final-cta-content">
+        <h2>还在犹豫？<br>免费试试第一次AI搜索</h2>
+        <p>
+          无需注册，无需信用卡，无需担心数据安全。<br>
+          3分钟，发现100个深耕AI但还未被发现的宝藏创作者。
+        </p>
+        <div class="final-cta-buttons">
+          <a href="01 低粉爆款挖掘.html" class="btn-large btn-primary">
+            开始挖掘AI爆款
+          </a>
+          <a href="docs/快速入门指南.md" class="btn-large btn-secondary" target="_blank">
+            查看完整文档
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo">AI RADAR</div>
+        <p class="footer-tagline">
+          AI驱动的YouTube AI创作者分析工具集，专注挖掘AI领域的宝藏博主。
+        </p>
+      </div>
+
+      <div class="footer-section">
+        <h4>核心工具</h4>
+        <ul class="footer-links">
+          <li><a href="01 低粉爆款挖掘.html">爆款挖掘</a></li>
+          <li><a href="02 YouTube博主管理工具.html">博主管理</a></li>
+          <li><a href="03 视频监控工具.html">视频监控</a></li>
+          <li><a href="04 标签管理工具.html">标签管理</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>支持</h4>
+        <ul class="footer-links">
+          <li><a href="API池管理工具.html">API配置</a></li>
+          <li><a href="utilities/快速修复工具.html">诊断工具</a></li>
+          <li><a href="docs/故障排除指南.md" target="_blank">故障排除</a></li>
+          <li><a href="utilities/存储状态检查.html">存储检查</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>文档</h4>
+        <ul class="footer-links">
+          <li><a href="docs/快速入门指南.md" target="_blank">快速入门</a></li>
+          <li><a href="docs/快速入门-API配置.md" target="_blank">API配置</a></li>
+          <li><a href="docs/更新日志-API池版本.md" target="_blank">更新日志</a></li>
+          <li><a href="docs/设计系统说明.md" target="_blank">设计系统</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 AI RADAR · Persona5 Refined Design System</p>
+      <p style="margin-top: 8px; font-size: 13px;">
+        让数据驱动你的AI学习策略 · 发现下一个AI爆款创作者
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      mobileMenuBtn.classList.toggle('active');
+    });
+
+    // Close menu when clicking links
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        mobileMenuBtn.classList.remove('active');
+      });
+    });
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+      
+      if (currentScroll > 100) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      lastScroll = currentScroll;
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href.length > 1) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            const offsetTop = target.offsetTop - 80;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        }
+      });
+    });
+
+    // Intersection Observer for fade-in animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Progress bar animation on scroll
+    const progressBars = document.querySelectorAll('.proof-progress-bar');
+    const progressObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const bar = entry.target;
+          const width = bar.style.width;
+          bar.style.width = '0';
+          setTimeout(() => {
+            bar.style.width = width;
+          }, 200);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    progressBars.forEach(bar => {
+      progressObserver.observe(bar);
+    });
+
+    // Toggle supporting tools
+    const toggleBtn = document.getElementById('toggleTools');
+    const toolsCollapsible = document.getElementById('toolsCollapsible');
+
+    toggleBtn.addEventListener('click', () => {
+      toolsCollapsible.classList.toggle('expanded');
+      if (toolsCollapsible.classList.contains('expanded')) {
+        toggleBtn.textContent = '收起工具 ↑';
+      } else {
+        toggleBtn.textContent = '查看更多工具 ↓';
+      }
+    });
+
+    // Channel Carousel Auto-scroll
+    const channelCarousel = document.getElementById('channelCarousel');
+    let carouselInterval;
+    let isCarouselPaused = false;
+
+    // Auto-scroll function
+    function autoScrollCarousel() {
+      if (!isCarouselPaused && channelCarousel) {
+        const cardWidth = channelCarousel.querySelector('.channel-card').offsetWidth;
+        const gap = 24; // gap between cards
+        const scrollAmount = cardWidth + gap;
+        
+        // Check if we've reached the end
+        if (channelCarousel.scrollLeft + channelCarousel.clientWidth >= channelCarousel.scrollWidth - 10) {
+          // Reset to beginning for infinite loop
+          channelCarousel.scrollTo({
+            left: 0,
+            behavior: 'smooth'
+          });
+        } else {
+          // Scroll to next card
+          channelCarousel.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }
+
+    // Start auto-scroll (every 3 seconds)
+    carouselInterval = setInterval(autoScrollCarousel, 3000);
+
+    // Pause on hover
+    channelCarousel.addEventListener('mouseenter', () => {
+      isCarouselPaused = true;
+    });
+
+    // Resume on mouse leave
+    channelCarousel.addEventListener('mouseleave', () => {
+      isCarouselPaused = false;
+    });
+
+    // Pause on touch/drag
+    let isUserScrolling = false;
+    let scrollTimeout;
+
+    channelCarousel.addEventListener('scroll', () => {
+      isUserScrolling = true;
+      isCarouselPaused = true;
+      
+      // Clear previous timeout
+      clearTimeout(scrollTimeout);
+      
+      // Resume auto-scroll after user stops scrolling for 2 seconds
+      scrollTimeout = setTimeout(() => {
+        isUserScrolling = false;
+        isCarouselPaused = false;
+      }, 2000);
+    });
+
+    // Touch event handling for mobile
+    channelCarousel.addEventListener('touchstart', () => {
+      isCarouselPaused = true;
+    });
+
+    channelCarousel.addEventListener('touchend', () => {
+      setTimeout(() => {
+        if (!isUserScrolling) {
+          isCarouselPaused = false;
+        }
+      }, 2000);
+    });
+
+    // Number Counter Animation
+    function animateCounter(element, target, duration = 2000) {
+      const start = 0;
+      const increment = target / (duration / 16);
+      let current = start;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          element.textContent = formatStatNumber(target);
+          clearInterval(timer);
+        } else {
+          element.textContent = formatStatNumber(Math.floor(current));
+        }
+      }, 16);
+    }
+
+    function formatStatNumber(num) {
+      if (num >= 10000) {
+        return (num / 1000).toFixed(1) + 'K';
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+      }
+      return num.toString();
+    }
+
+    // Animate hero stats on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const statValues = document.querySelectorAll('.hero-stat-value');
+        if (statValues.length >= 3) {
+          // Temporarily store original values
+          const originals = [
+            statValues[0].textContent,
+            statValues[1].textContent, 
+            statValues[2].textContent
+          ];
+          
+          // Animate numbers
+          statValues[0].textContent = '0';
+          statValues[1].textContent = '0';
+          statValues[2].textContent = '0';
+          
+          setTimeout(() => {
+            animateCounter(statValues[0], 1247, 2000);
+            animateCounter(statValues[1], 8392, 2500);
+            // For the third one with text, just fade it in
+            statValues[2].textContent = originals[2];
+          }, 500);
+        }
+      }, 300);
+    });
+
+    // Add parallax effect to background orbs
+    document.addEventListener('mousemove', (e) => {
+      const orbs = document.querySelectorAll('.bg-orb');
+      const mouseX = e.clientX / window.innerWidth;
+      const mouseY = e.clientY / window.innerHeight;
+      
+      orbs.forEach((orb, index) => {
+        const speed = (index + 1) * 20;
+        const x = (mouseX - 0.5) * speed;
+        const y = (mouseY - 0.5) * speed;
+        orb.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    });
+
+    // Stagger animation for testimonial cards
+    const testimonialObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }, index * 150);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.testimonial-card').forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      testimonialObserver.observe(card);
+    });
+  </script>
+</body>
+</html>
+

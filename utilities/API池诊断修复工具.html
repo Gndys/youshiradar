@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API池诊断修复工具</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      color: #667eea;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 12px;
+    }
+    
+    .section h2 {
+      color: #495057;
+      margin-bottom: 15px;
+      font-size: 18px;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-success {
+      background: #28a745;
+    }
+    
+    .btn-warning {
+      background: #ffc107;
+      color: #000;
+    }
+    
+    .btn-danger {
+      background: #dc3545;
+    }
+    
+    .log-box {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+    
+    .log-item {
+      padding: 5px 0;
+      border-bottom: 1px solid #444;
+    }
+    
+    .log-item:last-child {
+      border-bottom: none;
+    }
+    
+    .log-success {
+      color: #7ef29a;
+    }
+    
+    .log-error {
+      color: #ff98a3;
+    }
+    
+    .log-warning {
+      color: #ffe600;
+    }
+    
+    .log-info {
+      color: #9ec9ff;
+    }
+  </style>
+  <link rel="stylesheet" href="notion-theme.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 API池诊断修复工具</h1>
+    
+    <div class="alert alert-info">
+      <strong>使用说明：</strong><br>
+      1. 点击"开始诊断"检查当前状态<br>
+      2. 根据诊断结果选择修复方案<br>
+      3. 如果问题仍未解决，可尝试"重置数据库"
+    </div>
+    
+    <div id="statusAlert" class="alert" style="display: none;"></div>
+    
+    <div class="section">
+      <h2>🔍 自动诊断</h2>
+      <button class="btn" onclick="runDiagnostics()">开始诊断</button>
+      <button class="btn btn-success" onclick="autoFix()">一键修复</button>
+      <button class="btn btn-warning" onclick="upgradeDatabase()">升级数据库到v3</button>
+      <button class="btn btn-danger" onclick="resetDatabase()">重置数据库</button>
+    </div>
+    
+    <div class="section">
+      <h2>📊 诊断日志</h2>
+      <div id="logBox" class="log-box">
+        <div class="log-item log-info">等待诊断...</div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>🔗 快速链接</h2>
+      <button class="btn" onclick="window.location.href='API池管理工具.html'">打开API池管理工具</button>
+      <button class="btn" onclick="window.location.href='存储状态检查.html'">存储状态检查</button>
+      <button class="btn" onclick="window.location.href='快速修复工具.html'">快速修复工具</button>
+    </div>
+  </div>
+  
+  <script>
+    let db;
+    const logs = [];
+    
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      logs.push({ message, type, timestamp });
+      updateLogDisplay();
+      console.log(`[${type}] ${message}`);
+    }
+    
+    function updateLogDisplay() {
+      const logBox = document.getElementById('logBox');
+      logBox.innerHTML = logs.map(l => 
+        `<div class="log-item log-${l.type}">[${l.timestamp}] ${l.message}</div>`
+      ).join('');
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+    
+    function showStatus(message, type) {
+      const statusAlert = document.getElementById('statusAlert');
+      statusAlert.className = `alert alert-${type}`;
+      statusAlert.innerHTML = message;
+      statusAlert.style.display = 'block';
+      setTimeout(() => {
+        statusAlert.style.display = 'none';
+      }, 5000);
+    }
+    
+    // 检查数据库
+    async function checkDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('YouTubeToolDB');
+        
+        request.onsuccess = () => {
+          const db = request.result;
+          const info = {
+            version: db.version,
+            stores: Array.from(db.objectStoreNames),
+            exists: true
+          };
+          db.close();
+          resolve(info);
+        };
+        
+        request.onerror = () => {
+          resolve({ exists: false, error: request.error });
+        };
+      });
+    }
+    
+    // 运行诊断
+    async function runDiagnostics() {
+      logs.length = 0;
+      log('开始诊断...', 'info');
+      
+      try {
+        // 检查浏览器支持
+        if (!window.indexedDB) {
+          log('❌ 浏览器不支持 IndexedDB', 'error');
+          showStatus('浏览器不支持 IndexedDB，请更换现代浏览器', 'danger');
+          return;
+        }
+        log('✅ IndexedDB 支持正常', 'success');
+        
+        // 检查数据库
+        const dbInfo = await checkDatabase();
+        if (!dbInfo.exists) {
+          log('⚠️ 数据库不存在，需要初始化', 'warning');
+        } else {
+          log(`✅ 数据库存在，版本: v${dbInfo.version}`, 'success');
+          log(`存储列表: ${dbInfo.stores.join(', ')}`, 'info');
+          
+          // 检查版本
+          if (dbInfo.version < 3) {
+            log(`⚠️ 数据库版本过旧 (v${dbInfo.version})，需要升级到 v3`, 'warning');
+          }
+          
+          // 检查必需的存储
+          const requiredStores = ['settings', 'channels', 'apiPool'];
+          const missingStores = requiredStores.filter(s => !dbInfo.stores.includes(s));
+          if (missingStores.length > 0) {
+            log(`⚠️ 缺少存储: ${missingStores.join(', ')}`, 'warning');
+          } else {
+            log('✅ 所有必需的存储都存在', 'success');
+          }
+        }
+        
+        // 打开正确版本的数据库
+        const request = indexedDB.open('YouTubeToolDB', 3);
+        
+        request.onupgradeneeded = (event) => {
+          log('正在升级数据库结构...', 'info');
+          const db = event.target.result;
+          
+          if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
+            log('创建 settings 存储', 'success');
+          }
+          
+          if (!db.objectStoreNames.contains('channels')) {
+            const channelStore = db.createObjectStore('channels', { keyPath: 'channelId' });
+            channelStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('创建 channels 存储', 'success');
+          }
+          
+          if (!db.objectStoreNames.contains('apiPool')) {
+            const apiStore = db.createObjectStore('apiPool', { keyPath: 'id', autoIncrement: true });
+            apiStore.createIndex('apiKey', 'apiKey', { unique: true });
+            apiStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('创建 apiPool 存储', 'success');
+          }
+        };
+        
+        request.onsuccess = async () => {
+          db = request.result;
+          log('✅ 数据库打开成功', 'success');
+          
+          // 检查数据
+          try {
+            const apiPoolData = await getAllData('apiPool');
+            log(`API池: ${apiPoolData.length} 个`, apiPoolData.length > 0 ? 'success' : 'warning');
+            
+            const channelsData = await getAllData('channels');
+            log(`博主: ${channelsData.length} 个`, channelsData.length > 0 ? 'success' : 'info');
+            
+            const apiKey = await getSetting('youtubeApiKey');
+            if (apiKey) {
+              log('检测到旧版API Key (settings存储)', 'warning');
+            }
+            
+            // 检查localStorage
+            const localApiKey = localStorage.getItem('youtubeApiKey');
+            const localChannels = localStorage.getItem('youtubeChannels');
+            
+            if (localApiKey) {
+              log('⚠️ 检测到 localStorage 中的旧API Key', 'warning');
+            }
+            if (localChannels) {
+              log('⚠️ 检测到 localStorage 中的旧博主数据', 'warning');
+            }
+            
+            // 诊断结论
+            log('=== 诊断完成 ===', 'info');
+            
+            if (apiPoolData.length === 0 && !apiKey && !localApiKey) {
+              log('建议: 没有发现任何API数据，请添加新的API Key', 'warning');
+              showStatus('没有发现API数据，请在API池管理工具中添加API Key', 'warning');
+            } else if (apiPoolData.length > 0) {
+              log('✅ API池数据正常，可以正常使用', 'success');
+              showStatus(`诊断完成！发现 ${apiPoolData.length} 个API Key`, 'success');
+            } else {
+              log('建议: 检测到旧数据，建议运行"一键修复"迁移数据', 'warning');
+              showStatus('检测到旧数据，建议点击"一键修复"迁移数据', 'warning');
+            }
+            
+          } catch (error) {
+            log(`检查数据时出错: ${error.message}`, 'error');
+          }
+        };
+        
+        request.onerror = () => {
+          log(`❌ 数据库打开失败: ${request.error}`, 'error');
+          showStatus('数据库打开失败，请查看日志', 'danger');
+        };
+        
+      } catch (error) {
+        log(`❌ 诊断失败: ${error.message}`, 'error');
+        showStatus('诊断失败: ' + error.message, 'danger');
+      }
+    }
+    
+    // 获取所有数据
+    function getAllData(storeName) {
+      return new Promise((resolve, reject) => {
+        try {
+          if (!db.objectStoreNames.contains(storeName)) {
+            resolve([]);
+            return;
+          }
+          
+          const transaction = db.transaction([storeName], 'readonly');
+          const store = transaction.objectStore(storeName);
+          const request = store.getAll();
+          
+          request.onsuccess = () => resolve(request.result || []);
+          request.onerror = () => reject(request.error);
+        } catch (error) {
+          resolve([]);
+        }
+      });
+    }
+    
+    // 获取设置
+    function getSetting(key) {
+      return new Promise((resolve, reject) => {
+        try {
+          if (!db.objectStoreNames.contains('settings')) {
+            resolve(null);
+            return;
+          }
+          
+          const transaction = db.transaction(['settings'], 'readonly');
+          const store = transaction.objectStore('settings');
+          const request = store.get(key);
+          
+          request.onsuccess = () => resolve(request.result?.value);
+          request.onerror = () => reject(request.error);
+        } catch (error) {
+          resolve(null);
+        }
+      });
+    }
+    
+    // 一键修复
+    async function autoFix() {
+      if (!confirm('将执行以下操作：\n1. 升级数据库到v3\n2. 迁移localStorage旧数据\n3. 清理冗余数据\n\n确定继续吗？')) {
+        return;
+      }
+      
+      logs.length = 0;
+      log('开始一键修复...', 'info');
+      
+      try {
+        // 打开数据库
+        const request = indexedDB.open('YouTubeToolDB', 3);
+        
+        request.onupgradeneeded = (event) => {
+          log('升级数据库结构...', 'info');
+          const db = event.target.result;
+          
+          if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
+            log('✅ 创建 settings 存储', 'success');
+          }
+          
+          if (!db.objectStoreNames.contains('channels')) {
+            const channelStore = db.createObjectStore('channels', { keyPath: 'channelId' });
+            channelStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('✅ 创建 channels 存储', 'success');
+          }
+          
+          if (!db.objectStoreNames.contains('apiPool')) {
+            const apiStore = db.createObjectStore('apiPool', { keyPath: 'id', autoIncrement: true });
+            apiStore.createIndex('apiKey', 'apiKey', { unique: true });
+            apiStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('✅ 创建 apiPool 存储', 'success');
+          }
+        };
+        
+        request.onsuccess = async () => {
+          db = request.result;
+          log('✅ 数据库升级完成', 'success');
+          
+          // 迁移数据
+          let migrated = 0;
+          
+          // 从localStorage迁移
+          const localApiKey = localStorage.getItem('youtubeApiKey');
+          if (localApiKey) {
+            const tx = db.transaction(['apiPool'], 'readwrite');
+            const store = tx.objectStore('apiPool');
+            
+            // 检查是否已存在
+            const existing = await getAllData('apiPool');
+            const exists = existing.some(api => api.apiKey === localApiKey);
+            
+            if (!exists) {
+              store.add({
+                apiKey: localApiKey,
+                status: 'active',
+                addedAt: new Date().toISOString(),
+                usageCount: 0,
+                lastUsed: null,
+                note: '从localStorage迁移'
+              });
+              
+              await new Promise(resolve => tx.oncomplete = resolve);
+              log('✅ 已迁移localStorage中的API Key', 'success');
+              migrated++;
+            } else {
+              log('API Key已存在，跳过迁移', 'info');
+            }
+          }
+          
+          // 从settings迁移
+          const settingsApiKey = await getSetting('youtubeApiKey');
+          if (settingsApiKey && settingsApiKey !== localApiKey) {
+            const tx = db.transaction(['apiPool'], 'readwrite');
+            const store = tx.objectStore('apiPool');
+            
+            const existing = await getAllData('apiPool');
+            const exists = existing.some(api => api.apiKey === settingsApiKey);
+            
+            if (!exists) {
+              store.add({
+                apiKey: settingsApiKey,
+                status: 'active',
+                addedAt: new Date().toISOString(),
+                usageCount: 0,
+                lastUsed: null,
+                note: '从settings迁移'
+              });
+              
+              await new Promise(resolve => tx.oncomplete = resolve);
+              log('✅ 已迁移settings中的API Key', 'success');
+              migrated++;
+            }
+          }
+          
+          log(`=== 修复完成 ===`, 'info');
+          log(`共迁移 ${migrated} 个API Key`, 'success');
+          
+          if (migrated > 0) {
+            showStatus(`修复成功！已迁移 ${migrated} 个API Key，请打开API池管理工具查看`, 'success');
+          } else {
+            showStatus('修复完成，但没有发现需要迁移的数据', 'info');
+          }
+          
+          // 提示清理localStorage
+          if (localApiKey || localStorage.getItem('youtubeChannels')) {
+            if (confirm('数据已迁移，是否清理localStorage旧数据？')) {
+              localStorage.removeItem('youtubeApiKey');
+              localStorage.removeItem('youtubeChannels');
+              log('✅ 已清理localStorage旧数据', 'success');
+            }
+          }
+        };
+        
+        request.onerror = () => {
+          log(`❌ 修复失败: ${request.error}`, 'error');
+          showStatus('修复失败: ' + request.error, 'danger');
+        };
+        
+      } catch (error) {
+        log(`❌ 修复失败: ${error.message}`, 'error');
+        showStatus('修复失败: ' + error.message, 'danger');
+      }
+    }
+    
+    // 升级数据库
+    async function upgradeDatabase() {
+      if (!confirm('此操作将升级数据库到v3，包含API池功能。\n\n现有数据不会丢失，确定继续吗？')) {
+        return;
+      }
+      
+      logs.length = 0;
+      log('开始升级数据库...', 'info');
+      
+      try {
+        // 关闭现有连接
+        if (db) {
+          db.close();
+          log('关闭现有数据库连接', 'info');
+        }
+        
+        const request = indexedDB.open('YouTubeToolDB', 3);
+        
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          log(`从 v${event.oldVersion} 升级到 v${event.newVersion}`, 'info');
+          
+          if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
+            log('✅ 创建 settings 存储', 'success');
+          }
+          
+          if (!db.objectStoreNames.contains('channels')) {
+            const channelStore = db.createObjectStore('channels', { keyPath: 'channelId' });
+            channelStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('✅ 创建 channels 存储', 'success');
+          }
+          
+          if (!db.objectStoreNames.contains('apiPool')) {
+            const apiStore = db.createObjectStore('apiPool', { keyPath: 'id', autoIncrement: true });
+            apiStore.createIndex('apiKey', 'apiKey', { unique: true });
+            apiStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('✅ 创建 apiPool 存储', 'success');
+          }
+        };
+        
+        request.onsuccess = () => {
+          db = request.result;
+          log('✅ 数据库升级成功！', 'success');
+          showStatus('数据库已成功升级到v3！请刷新API池管理工具页面。', 'success');
+        };
+        
+        request.onerror = () => {
+          log(`❌ 升级失败: ${request.error}`, 'error');
+          showStatus('升级失败: ' + request.error, 'danger');
+        };
+        
+      } catch (error) {
+        log(`❌ 升级失败: ${error.message}`, 'error');
+        showStatus('升级失败: ' + error.message, 'danger');
+      }
+    }
+    
+    // 重置数据库
+    async function resetDatabase() {
+      if (!confirm('⚠️ 警告：此操作将删除所有数据！\n\n确定要重置数据库吗？')) {
+        return;
+      }
+      
+      if (!confirm('最后确认：所有API Key和博主数据都将丢失！\n\n真的要继续吗？')) {
+        return;
+      }
+      
+      logs.length = 0;
+      log('开始重置数据库...', 'info');
+      
+      try {
+        // 关闭连接
+        if (db) {
+          db.close();
+          log('关闭数据库连接', 'info');
+        }
+        
+        // 删除数据库
+        const deleteRequest = indexedDB.deleteDatabase('YouTubeToolDB');
+        
+        deleteRequest.onsuccess = () => {
+          log('✅ 数据库已删除', 'success');
+          
+          // 重新创建
+          const createRequest = indexedDB.open('YouTubeToolDB', 3);
+          
+          createRequest.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            
+            const settingsStore = db.createObjectStore('settings', { keyPath: 'key' });
+            log('✅ 创建 settings 存储', 'success');
+            
+            const channelStore = db.createObjectStore('channels', { keyPath: 'channelId' });
+            channelStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('✅ 创建 channels 存储', 'success');
+            
+            const apiStore = db.createObjectStore('apiPool', { keyPath: 'id', autoIncrement: true });
+            apiStore.createIndex('apiKey', 'apiKey', { unique: true });
+            apiStore.createIndex('addedAt', 'addedAt', { unique: false });
+            log('✅ 创建 apiPool 存储', 'success');
+          };
+          
+          createRequest.onsuccess = () => {
+            db = createRequest.result;
+            log('✅ 数据库重置完成！', 'success');
+            showStatus('数据库已重置！请刷新工具页面。', 'success');
+          };
+          
+          createRequest.onerror = () => {
+            log(`❌ 创建数据库失败: ${createRequest.error}`, 'error');
+          };
+        };
+        
+        deleteRequest.onerror = () => {
+          log(`❌ 删除数据库失败: ${deleteRequest.error}`, 'error');
+          showStatus('删除失败: ' + deleteRequest.error, 'danger');
+        };
+        
+        deleteRequest.onblocked = () => {
+          log('⚠️ 删除被阻止，请关闭所有工具标签页后重试', 'warning');
+          showStatus('请关闭所有工具标签页后重试', 'warning');
+        };
+        
+      } catch (error) {
+        log(`❌ 重置失败: ${error.message}`, 'error');
+        showStatus('重置失败: ' + error.message, 'danger');
+      }
+    }
+    
+    // 页面加载时自动运行诊断
+    window.onload = () => {
+      log('API池诊断修复工具已就绪', 'info');
+      log('点击"开始诊断"按钮开始检查', 'info');
+    };
+  </script>
+</body>
+</html>
+

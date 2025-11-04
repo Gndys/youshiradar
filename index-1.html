@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHANTOM RADAR - 找到下一个百万播放的创作者</title>
+  <meta name="description" content="AI驱动的YouTube数据分析平台，让你比竞争对手快10倍发现爆款机会。已被500+创作者和MCN机构使用。">
+  <style>
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========================================
+       DESIGN TOKENS - 数据驱动型配色系统
+       ======================================== */
+    :root {
+      /* 专业深色系统 */
+      --color-bg-base: #0a0e1a;
+      --color-bg-elevated: #0f1420;
+      --color-bg-card: #151b2b;
+      --color-bg-card-hover: #1a2133;
+      
+      /* 主要颜色 - 科技蓝 */
+      --color-primary: #2563eb;
+      --color-primary-hover: #3b82f6;
+      --color-primary-light: #60a5fa;
+      --color-primary-glow: rgba(37, 99, 235, 0.3);
+      
+      /* 强调色 - 数据绿 */
+      --color-success: #10b981;
+      --color-success-glow: rgba(16, 185, 129, 0.3);
+      
+      /* 警告色 */
+      --color-warning: #f59e0b;
+      --color-warning-glow: rgba(245, 158, 11, 0.3);
+      
+      /* 文字颜色 */
+      --color-text-primary: #f9fafb;
+      --color-text-secondary: #9ca3af;
+      --color-text-muted: #6b7280;
+      
+      /* 边框 */
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-border-hover: rgba(37, 99, 235, 0.4);
+      
+      /* 渐变系统 */
+      --gradient-primary: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      --gradient-hero: radial-gradient(circle at 50% 30%, rgba(37, 99, 235, 0.1) 0%, transparent 50%);
+      
+      /* 间距系统 */
+      --spacing-xs: 8px;
+      --spacing-sm: 16px;
+      --spacing-md: 24px;
+      --spacing-lg: 40px;
+      --spacing-xl: 60px;
+      --spacing-2xl: 80px;
+      --spacing-3xl: 120px;
+      
+      /* 圆角 */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      
+      /* 动画 */
+      --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+      --transition-fast: 0.2s var(--ease-smooth);
+      --transition-normal: 0.3s var(--ease-smooth);
+      
+      /* 阴影 */
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+      --shadow-glow-primary: 0 0 40px var(--color-primary-glow);
+      --shadow-glow-success: 0 0 40px var(--color-success-glow);
+    }
+
+    /* ========================================
+       BASE STYLES
+       ======================================== */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: var(--color-bg-base);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* ========================================
+       UTILITY CLASSES
+       ======================================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+
+    .container-wide {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+
+    .section {
+      padding: var(--spacing-3xl) 0;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: var(--color-text-secondary);
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto var(--spacing-xl);
+    }
+
+    /* ========================================
+       NAVIGATION
+       ======================================== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(10, 14, 26, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1000;
+      transition: all var(--transition-normal);
+    }
+
+    .navbar.scrolled {
+      background: rgba(10, 14, 26, 0.95);
+      box-shadow: var(--shadow-md);
+    }
+
+    .navbar-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+
+    .navbar-logo-icon {
+      font-size: 1.5rem;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      list-style: none;
+    }
+
+    .navbar-link {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: color var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .navbar-link:hover {
+      color: var(--color-text-primary);
+    }
+
+    .navbar-cta {
+      padding: 10px 24px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      color: white;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      border: none;
+      font-size: 0.95rem;
+    }
+
+    .navbar-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow-primary);
+    }
+
+    /* 移动端菜单按钮 */
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--color-text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ========================================
+       HERO SECTION
+       ======================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 70px;
+      background: var(--gradient-hero);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-2xl);
+      align-items: center;
+    }
+
+    .hero-content {
+      z-index: 2;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.03em;
+    }
+
+    .hero-title-highlight {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-xl);
+      line-height: 1.6;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .hero-stat {
+      padding: var(--spacing-md);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-normal);
+    }
+
+    .hero-stat:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-border-hover);
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero-stat-icon {
+      font-size: 1.5rem;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .hero-stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-xs);
+      background: var(--gradient-success);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-stat-label {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 16px 32px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: white;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow-primary);
+    }
+
+    .btn-secondary {
+      padding: 16px 32px;
+      background: transparent;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--color-text-primary);
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-primary);
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .hero-visual {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-dashboard {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-lg);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .dashboard-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .dashboard-status {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: 0.9rem;
+      color: var(--color-success);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--color-success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .dashboard-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-sm);
+    }
+
+    .metric {
+      padding: var(--spacing-sm);
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-sm);
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-primary-light);
+    }
+
+    /* ========================================
+       SOCIAL PROOF
+       ======================================== */
+    .social-proof {
+      padding: var(--spacing-xl) 0;
+      background: var(--color-bg-elevated);
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .social-proof-text {
+      text-align: center;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-md);
+      font-size: 0.95rem;
+    }
+
+    .social-proof-icons {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-xl);
+      flex-wrap: wrap;
+    }
+
+    .user-type-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+
+    .user-type-icon {
+      font-size: 1.2rem;
+    }
+
+    /* ========================================
+       PROBLEM SECTION
+       ======================================== */
+    .problems {
+      background: var(--color-bg-base);
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .problem-card {
+      padding: var(--spacing-lg);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      transition: all var(--transition-normal);
+    }
+
+    .problem-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(245, 158, 11, 0.3);
+      box-shadow: var(--shadow-md);
+    }
+
+    .problem-icon {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .problem-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-warning);
+    }
+
+    .problem-description {
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    .problem-cta {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: var(--spacing-xl);
+      padding: var(--spacing-lg);
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-lg);
+      border: 2px dashed var(--color-border);
+    }
+
+    /* ========================================
+       FEATURES SECTION
+       ======================================== */
+    .features {
+      background: var(--color-bg-elevated);
+    }
+
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-2xl);
+      align-items: center;
+      margin-bottom: var(--spacing-3xl);
+    }
+
+    .feature:nth-child(even) {
+      direction: rtl;
+    }
+
+    .feature:nth-child(even) > * {
+      direction: ltr;
+    }
+
+    .feature-visual {
+      position: relative;
+    }
+
+    .feature-screenshot {
+      width: 100%;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      box-shadow: var(--shadow-lg);
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+    }
+
+    .feature-content {
+      padding: var(--spacing-md);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .feature-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .feature-description {
+      font-size: 1.1rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-md);
+      line-height: 1.7;
+    }
+
+    .feature-points {
+      list-style: none;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .feature-points li {
+      padding: var(--spacing-xs) 0;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .feature-points li::before {
+      content: "•";
+      color: var(--color-success);
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .feature-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: 12px 24px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .feature-cta:hover {
+      transform: translateX(4px);
+      box-shadow: var(--shadow-glow-primary);
+    }
+
+    /* ========================================
+       WORKFLOW SECTION
+       ======================================== */
+    .workflow {
+      background: var(--color-bg-base);
+    }
+
+    .workflow-timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-md);
+      position: relative;
+      margin-top: var(--spacing-xl);
+    }
+
+    .workflow-step {
+      text-align: center;
+      position: relative;
+    }
+
+    .workflow-step-number {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto var(--spacing-sm);
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-glow-primary);
+    }
+
+    .workflow-step-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .workflow-step-description {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* ========================================
+       COMPARISON TABLE
+       ======================================== */
+    .comparison {
+      background: var(--color-bg-elevated);
+    }
+
+    .comparison-table {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison-table th {
+      padding: var(--spacing-md);
+      background: var(--color-bg-elevated);
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .comparison-table th:first-child {
+      width: 30%;
+    }
+
+    .comparison-table td {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .comparison-table .traditional {
+      color: var(--color-text-muted);
+    }
+
+    .comparison-table .phantom {
+      color: var(--color-success);
+      font-weight: 500;
+    }
+
+    /* ========================================
+       TESTIMONIALS
+       ======================================== */
+    .testimonials {
+      background: var(--color-bg-base);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+    }
+
+    .testimonial-card {
+      padding: var(--spacing-lg);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-normal);
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-border-hover);
+      box-shadow: var(--shadow-md);
+    }
+
+    .testimonial-label {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      color: var(--color-primary-light);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .testimonial-quote {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-md);
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .testimonial-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .testimonial-info {
+      flex: 1;
+    }
+
+    .testimonial-name {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .testimonial-role {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+    }
+
+    /* ========================================
+       FAQ SECTION
+       ======================================== */
+    .faq {
+      background: var(--color-bg-elevated);
+    }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      margin-bottom: var(--spacing-sm);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: var(--spacing-md);
+      background: none;
+      border: none;
+      color: var(--color-text-primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all var(--transition-fast);
+    }
+
+    .faq-question:hover {
+      color: var(--color-primary-light);
+    }
+
+    .faq-icon {
+      transition: transform var(--transition-fast);
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--transition-normal);
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+    }
+
+    .faq-answer-content {
+      padding: 0 var(--spacing-md) var(--spacing-md);
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ========================================
+       FINAL CTA
+       ======================================== */
+    .final-cta {
+      background: var(--color-bg-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .final-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--gradient-hero);
+      opacity: 0.5;
+    }
+
+    .final-cta-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: var(--spacing-3xl) var(--spacing-md);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .final-cta-title {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.02em;
+    }
+
+    .final-cta-subtitle {
+      font-size: 1.25rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .final-cta-button {
+      padding: 20px 48px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-lg);
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: white;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      border: none;
+      display: inline-block;
+    }
+
+    .final-cta-button:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-glow-primary);
+    }
+
+    .final-cta-features {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .final-cta-feature {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+    }
+
+    .final-cta-feature::before {
+      content: "✓";
+      color: var(--color-success);
+      font-weight: 700;
+    }
+
+    /* ========================================
+       FOOTER
+       ======================================== */
+    .footer {
+      background: var(--color-bg-elevated);
+      border-top: 1px solid var(--color-border);
+      padding: var(--spacing-xl) 0 var(--spacing-md);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .footer-brand {
+      max-width: 300px;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .footer-tagline {
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    .footer-section-title {
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      font-size: 0.95rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .footer-links a {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      transition: color var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-primary-light);
+    }
+
+    .footer-bottom {
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--color-border);
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ========================================
+       ANIMATIONS
+       ======================================== */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s var(--ease-smooth);
+    }
+
+    /* ========================================
+       RESPONSIVE DESIGN
+       ======================================== */
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+      }
+
+      .hero-visual {
+        order: -1;
+      }
+
+      .feature {
+        grid-template-columns: 1fr;
+      }
+
+      .feature:nth-child(even) {
+        direction: ltr;
+      }
+
+      .workflow-timeline {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-menu {
+        display: none;
+      }
+
+      .navbar-toggle {
+        display: block;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .problem-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow-timeline {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .final-cta-title {
+        font-size: 2rem;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* ========================================
+       数字滚动动画
+       ======================================== */
+    .counter {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="#" class="navbar-logo">
+        <span class="navbar-logo-icon">⚡</span>
+        <span>PHANTOM RADAR</span>
+      </a>
+      
+      <ul class="navbar-menu">
+        <li><a href="#features" class="navbar-link">功能</a></li>
+        <li><a href="#cases" class="navbar-link">案例</a></li>
+        <li><a href="#pricing" class="navbar-link">定价</a></li>
+        <li><a href="#docs" class="navbar-link">文档</a></li>
+      </ul>
+      
+      <button class="navbar-cta" onclick="scrollToTools()">免费开始</button>
+      
+      <button class="navbar-toggle">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero区 -->
+  <section class="hero">
+    <div class="container-wide">
+      <div class="hero-grid">
+        <div class="hero-content fade-in-up">
+          <h1 class="hero-title">
+            找到下一个<br>
+            <span class="hero-title-highlight">百万播放</span><br>
+            的创作者
+          </h1>
+          
+          <p class="hero-subtitle">
+            AI驱动的YouTube数据分析平台，让你比竞争对手快10倍发现爆款机会
+          </p>
+          
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-icon">📊</div>
+              <div class="hero-stat-value"><span class="counter" data-target="50000">0</span>+</div>
+              <div class="hero-stat-label">已分析频道</div>
+            </div>
+            
+            <div class="hero-stat">
+              <div class="hero-stat-icon">🎯</div>
+              <div class="hero-stat-value"><span class="counter" data-target="12000">0</span>+</div>
+              <div class="hero-stat-label">低粉爆款</div>
+            </div>
+            
+            <div class="hero-stat">
+              <div class="hero-stat-icon">⚡</div>
+              <div class="hero-stat-value"><span class="counter" data-target="85">0</span>%</div>
+              <div class="hero-stat-label">节省时间</div>
+            </div>
+          </div>
+          
+          <div class="hero-cta">
+            <button class="btn-primary" onclick="scrollToTools()">
+              立即免费使用
+              <span>→</span>
+            </button>
+            <button class="btn-secondary" onclick="alert('演示视频功能待添加')">
+              <span>▶</span>
+              观看3分钟演示
+            </button>
+          </div>
+        </div>
+        
+        <div class="hero-visual">
+          <div class="hero-dashboard">
+            <div class="dashboard-header">
+              <div class="dashboard-title">📡 实时数据看板</div>
+              <div class="dashboard-status">
+                <span class="status-dot"></span>
+                <span>实时分析中</span>
+              </div>
+            </div>
+            
+            <div class="dashboard-metrics">
+              <div class="metric">
+                <div class="metric-label">今日发现</div>
+                <div class="metric-value"><span class="counter" data-target="127">0</span></div>
+              </div>
+              
+              <div class="metric">
+                <div class="metric-label">爆款率</div>
+                <div class="metric-value"><span class="counter" data-target="68">0</span>%</div>
+              </div>
+              
+              <div class="metric">
+                <div class="metric-label">平均粉丝</div>
+                <div class="metric-value"><span class="counter" data-target="8500">0</span></div>
+              </div>
+              
+              <div class="metric">
+                <div class="metric-label">平均播放</div>
+                <div class="metric-value"><span class="counter" data-target="152">0</span>K</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 社会证明条 -->
+  <section class="social-proof">
+    <div class="container">
+      <p class="social-proof-text">已被 <strong>500+</strong> 创作者和MCN机构使用</p>
+      <div class="social-proof-icons">
+        <div class="user-type-badge">
+          <span class="user-type-icon">👤</span>
+          <span>个人创作者</span>
+        </div>
+        <div class="user-type-badge">
+          <span class="user-type-icon">🏢</span>
+          <span>MCN机构</span>
+        </div>
+        <div class="user-type-badge">
+          <span class="user-type-icon">📱</span>
+          <span>内容运营</span>
+        </div>
+        <div class="user-type-badge">
+          <span class="user-type-icon">📊</span>
+          <span>数据分析师</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 问题痛点区 -->
+  <section class="section problems">
+    <div class="container">
+      <h2 class="section-title">你是否也遇到这些问题？</h2>
+      
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="problem-icon">⏰</div>
+          <h3 class="problem-title">效率低下</h3>
+          <p class="problem-description">
+            手动查找效率低下，每天浪费3小时搜索对标博主，还容易遗漏优质目标
+          </p>
+        </div>
+        
+        <div class="problem-card">
+          <div class="problem-icon">❓</div>
+          <h3 class="problem-title">方向迷茫</h3>
+          <p class="problem-description">
+            不知道该对标哪些创作者，大号难追，小号难找，缺乏系统方法
+          </p>
+        </div>
+        
+        <div class="problem-card">
+          <div class="problem-icon">😵</div>
+          <h3 class="problem-title">数据杂乱</h3>
+          <p class="problem-description">
+            错过了黄金学习期，爆款已经被抄烂，数据管理混乱难追踪
+          </p>
+        </div>
+      </div>
+      
+      <div class="problem-cta">
+        👇 PHANTOM RADAR 帮你解决这一切
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心功能展示区 -->
+  <section class="section features" id="features">
+    <div class="container-wide">
+      <h2 class="section-title">强大的功能，助你快速成长</h2>
+      
+      <!-- 功能1：低粉爆款雷达 -->
+      <div class="feature">
+        <div class="feature-visual">
+          <div class="feature-screenshot">
+            🎯 低粉爆款雷达界面预览
+          </div>
+        </div>
+        
+        <div class="feature-content">
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">10分钟找到100个潜力创作者</h3>
+          <p class="feature-description">
+            智能筛选粉丝少但视频爆款的频道，可复制性强，成功率高。
+            让你发现那些被忽视的宝藏创作者。
+          </p>
+          
+          <ul class="feature-points">
+            <li>自定义粉丝数上限，精准筛选</li>
+            <li>批量搜索和分析，效率提升10倍</li>
+            <li>一键导出博主列表，随时备份</li>
+            <li>收益估算功能，了解真实潜力</li>
+          </ul>
+          
+          <a href="01 低粉爆款挖掘.html" class="feature-cta">
+            开始挖掘 →
+          </a>
+        </div>
+      </div>
+      
+      <!-- 功能2：博主管理系统 -->
+      <div class="feature">
+        <div class="feature-visual">
+          <div class="feature-screenshot">
+            📊 博主管理系统界面预览
+          </div>
+        </div>
+        
+        <div class="feature-content">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">系统化管理你的对标数据库</h3>
+          <p class="feature-description">
+            告别杂乱无章的收藏夹，建立属于你的专业博主数据库。
+            分类管理、标签打分、批量操作一应俱全。
+          </p>
+          
+          <ul class="feature-points">
+            <li>分类管理，清晰组织对标账号</li>
+            <li>自定义标签，灵活打分评价</li>
+            <li>批量导入导出，数据安全可控</li>
+            <li>详细数据展示，辅助决策分析</li>
+          </ul>
+          
+          <a href="02 YouTube博主管理工具.html" class="feature-cta">
+            开始管理 →
+          </a>
+        </div>
+      </div>
+      
+      <!-- 功能3：视频监控工具 -->
+      <div class="feature">
+        <div class="feature-visual">
+          <div class="feature-screenshot">
+            🔍 视频监控工具界面预览
+          </div>
+        </div>
+        
+        <div class="feature-content">
+          <div class="feature-icon">🔍</div>
+          <h3 class="feature-title">自动追踪对标博主最新动态</h3>
+          <p class="feature-description">
+            实时监控对标账号的最新视频，第一时间发现爆款趋势。
+            排行榜功能让你不错过任何热门内容。
+          </p>
+          
+          <ul class="feature-points">
+            <li>自动抓取最新视频数据</li>
+            <li>智能排行榜，发现热门内容</li>
+            <li>详细数据对比分析</li>
+            <li>一键跳转，快速学习</li>
+          </ul>
+          
+          <a href="03 视频监控工具.html" class="feature-cta">
+            开始监控 →
+          </a>
+        </div>
+      </div>
+      
+      <!-- 功能4：标签管理工具 -->
+      <div class="feature">
+        <div class="feature-visual">
+          <div class="feature-screenshot">
+            🏷️ 标签管理工具界面预览
+          </div>
+        </div>
+        
+        <div class="feature-content">
+          <div class="feature-icon">🏷️</div>
+          <h3 class="feature-title">建立你的专属选题库</h3>
+          <p class="feature-description">
+            收集和分析热门标签，建立系统化的选题库。
+            热度评分和匹配统计帮你找到最佳内容方向。
+          </p>
+          
+          <ul class="feature-points">
+            <li>批量提取视频标签</li>
+            <li>热度评分，发现潜力标签</li>
+            <li>匹配统计，了解市场需求</li>
+            <li>自动补全，提升效率</li>
+          </ul>
+          
+          <a href="04 标签管理工具.html" class="feature-cta">
+            开始分析 →
+          </a>
+        </div>
+      </div>
+      
+      <!-- 功能5：API智能池 -->
+      <div class="feature">
+        <div class="feature-visual">
+          <div class="feature-screenshot">
+            ⚡ API智能池界面预览
+          </div>
+        </div>
+        
+        <div class="feature-content">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">突破API配额限制</h3>
+          <p class="feature-description">
+            智能管理多个API Key，自动轮换和负载均衡。
+            让你不再担心配额用尽，尽情分析数据。
+          </p>
+          
+          <ul class="feature-points">
+            <li>智能池化管理，自动轮换</li>
+            <li>实时监控配额使用情况</li>
+            <li>负载均衡，延长使用时间</li>
+            <li>诊断修复，快速解决问题</li>
+          </ul>
+          
+          <a href="API池管理工具.html" class="feature-cta">
+            开始配置 →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 工作流程区 -->
+  <section class="section workflow">
+    <div class="container">
+      <h2 class="section-title">4步开始你的内容策略</h2>
+      <p class="section-subtitle">简单快速，5分钟即可上手</p>
+      
+      <div class="workflow-timeline">
+        <div class="workflow-step">
+          <div class="workflow-step-number">1</div>
+          <h3 class="workflow-step-title">配置API</h3>
+          <p class="workflow-step-description">
+            5分钟完成YouTube API配置，我们提供详细教程
+          </p>
+        </div>
+        
+        <div class="workflow-step">
+          <div class="workflow-step-number">2</div>
+          <h3 class="workflow-step-title">挖掘爆款</h3>
+          <p class="workflow-step-description">
+            使用爆款雷达，10分钟找到100+潜力博主
+          </p>
+        </div>
+        
+        <div class="workflow-step">
+          <div class="workflow-step-number">3</div>
+          <h3 class="workflow-step-title">管理博主</h3>
+          <p class="workflow-step-description">
+            系统化保存和分类你的对标账号数据
+          </p>
+        </div>
+        
+        <div class="workflow-step">
+          <div class="workflow-step-number">4</div>
+          <h3 class="workflow-step-title">持续监控</h3>
+          <p class="workflow-step-description">
+            自动追踪最新视频，永不错过爆款机会
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 对比表格区 -->
+  <section class="section comparison" id="pricing">
+    <div class="container">
+      <h2 class="section-title">为什么选择 PHANTOM RADAR？</h2>
+      
+      <div class="comparison-table">
+        <table>
+          <thead>
+            <tr>
+              <th>对比维度</th>
+              <th>传统方法</th>
+              <th>PHANTOM RADAR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>发现效率</strong></td>
+              <td class="traditional">手动1小时找10个</td>
+              <td class="phantom">自动10分钟找100+</td>
+            </tr>
+            <tr>
+              <td><strong>数据深度</strong></td>
+              <td class="traditional">只看基础数据</td>
+              <td class="phantom">收益估算+标签分析</td>
+            </tr>
+            <tr>
+              <td><strong>持续监控</strong></td>
+              <td class="traditional">手动追踪，容易遗漏</td>
+              <td class="phantom">自动监控+排行榜</td>
+            </tr>
+            <tr>
+              <td><strong>数据管理</strong></td>
+              <td class="traditional">散乱无章，难以查找</td>
+              <td class="phantom">系统化分类管理</td>
+            </tr>
+            <tr>
+              <td><strong>API管理</strong></td>
+              <td class="traditional">单Key易超限</td>
+              <td class="phantom">智能池化轮换</td>
+            </tr>
+            <tr>
+              <td><strong>使用成本</strong></td>
+              <td class="traditional">时间成本高</td>
+              <td class="phantom">完全免费，效率高</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 真实案例区 -->
+  <section class="section testimonials" id="cases">
+    <div class="container">
+      <h2 class="section-title">看看他们如何使用工具</h2>
+      <p class="section-subtitle">真实用户的成功故事</p>
+      
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-label">新手创作者</div>
+          <p class="testimonial-quote">
+            "我用爆款雷达找到了20个同赛道的小号，模仿他们的选题思路，
+            第一个月就做出了10万播放的视频。现在我的频道已经涨到5000粉了！"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">李</div>
+            <div class="testimonial-info">
+              <div class="testimonial-name">小李</div>
+              <div class="testimonial-role">科技区UP主</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial-card">
+          <div class="testimonial-label">MCN机构</div>
+          <p class="testimonial-quote">
+            "API池功能让我们能同时监控200个对标账号，不用担心配额，
+            运营效率提升了5倍。现在团队的数据分析工作都依赖这套工具。"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">王</div>
+            <div class="testimonial-info">
+              <div class="testimonial-name">王总</div>
+              <div class="testimonial-role">MCN运营总监</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="testimonial-card">
+          <div class="testimonial-label">内容策划</div>
+          <p class="testimonial-quote">
+            "标签管理工具帮我建立了完整的选题库，每次策划都有数据支持。
+            不再盲目选题，内容质量和播放量都有了明显提升。"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">张</div>
+            <div class="testimonial-info">
+              <div class="testimonial-name">张姐</div>
+              <div class="testimonial-role">内容策划</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ区 -->
+  <section class="section faq" id="docs">
+    <div class="container">
+      <h2 class="section-title">常见问题解答</h2>
+      
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>需要编程基础吗？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              完全不需要！只需在浏览器中打开HTML文件即可使用，像打开网页一样简单。
+              所有功能都有直观的图形界面，点击按钮即可操作。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>数据存储在哪里？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              所有数据存储在您的本地浏览器中（使用localStorage），不会上传到任何服务器。
+              这意味着您的数据100%私密安全，完全由您掌控。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>需要YouTube API Key吗？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              需要，但我们提供详细的获取教程，5分钟即可完成配置。
+              YouTube API完全免费，每个账号每天有10,000单位的配额。
+              使用我们的API池功能，您可以添加多个Key突破限制。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>支持哪些浏览器？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              支持所有现代浏览器，包括Chrome、Edge、Firefox、Safari等。
+              推荐使用Chrome或Edge，体验最佳。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>有使用限制吗？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              只受YouTube API配额限制（每个Key每天10,000单位）。
+              通过使用API池功能添加多个Key，您可以大幅提升每日可分析的数据量。
+              工具本身完全免费，没有任何功能限制。
+            </div>
+          </div>
+        </div>
+        
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>如何备份数据？</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            <div class="faq-answer-content">
+              每个工具都内置一键导出功能，支持CSV格式，随时备份您的数据。
+              您也可以使用浏览器的开发者工具导出localStorage数据。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 最终CTA -->
+  <section class="final-cta">
+    <div class="final-cta-content">
+      <h2 class="final-cta-title">准备好发现下一个爆款了吗？</h2>
+      <p class="final-cta-subtitle">
+        加入500+创作者，让数据驱动你的内容策略
+      </p>
+      
+      <button class="final-cta-button" onclick="scrollToTools()">
+        立即免费开始
+      </button>
+      
+      <div class="final-cta-features">
+        <div class="final-cta-feature">无需注册</div>
+        <div class="final-cta-feature">无需付费</div>
+        <div class="final-cta-feature">立即使用</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">⚡ PHANTOM RADAR</div>
+          <p class="footer-tagline">
+            AI驱动的YouTube数据分析工具集，帮助创作者发现被忽视的爆款机会，
+            让数据驱动你的内容策略。
+          </p>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-section-title">核心工具</h4>
+          <ul class="footer-links">
+            <li><a href="01 低粉爆款挖掘.html">低粉爆款挖掘</a></li>
+            <li><a href="02 YouTube博主管理工具.html">博主管理系统</a></li>
+            <li><a href="03 视频监控工具.html">视频监控工具</a></li>
+            <li><a href="04 标签管理工具.html">标签管理工具</a></li>
+            <li><a href="API池管理工具.html">API智能池</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-section-title">文档资源</h4>
+          <ul class="footer-links">
+            <li><a href="docs/快速入门指南.md">快速入门指南</a></li>
+            <li><a href="docs/API配置说明.md">API配置说明</a></li>
+            <li><a href="docs/故障排除指南.md">故障排除</a></li>
+            <li><a href="docs/README.md">项目文档</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4 class="footer-section-title">其他资源</h4>
+          <ul class="footer-links">
+            <li><a href="index-v3.html">经典版首页</a></li>
+            <li><a href="utilities/设计预览.html">设计预览</a></li>
+            <li><a href="utilities/存储状态检查.html">存储状态检查</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2024 PHANTOM RADAR. 让数据驱动你的内容策略。</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 导航栏滚动效果
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // 平滑滚动到工具区（点击CTA按钮）
+    function scrollToTools() {
+      const toolsSection = document.getElementById('features');
+      if (toolsSection) {
+        toolsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // FAQ展开/收起
+    function toggleFAQ(button) {
+      const faqItem = button.parentElement;
+      const isActive = faqItem.classList.contains('active');
+      
+      // 关闭所有其他FAQ
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // 切换当前FAQ
+      if (!isActive) {
+        faqItem.classList.add('active');
+      }
+    }
+
+    // 数字滚动动画
+    function animateCounter(element) {
+      const target = parseInt(element.getAttribute('data-target'));
+      const duration = 2000; // 2秒
+      const step = target / (duration / 16); // 60fps
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+          element.textContent = target.toLocaleString();
+          clearInterval(timer);
+        } else {
+          element.textContent = Math.floor(current).toLocaleString();
+        }
+      }, 16);
+    }
+
+    // 页面加载完成后启动数字动画
+    window.addEventListener('load', function() {
+      // 延迟500ms后开始动画
+      setTimeout(() => {
+        document.querySelectorAll('.counter').forEach(counter => {
+          animateCounter(counter);
+        });
+      }, 500);
+    });
+
+    // Intersection Observer - 滚动到视图时触发动画
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // 监听所有需要动画的元素
+    document.addEventListener('DOMContentLoaded', function() {
+      const animatedElements = document.querySelectorAll('.feature, .problem-card, .testimonial-card');
+      animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+      });
+    });
+  </script>
+</body>
+</html>
+

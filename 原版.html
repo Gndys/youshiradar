@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<!-- saved from url=(0219)file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/index.html -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHANTOM RADAR - 低粉爆款雷达</title>
+  <meta name="description" content="发现下一个爆款创作者。AI驱动的YouTube数据分析工具集，让你在竞争中保持领先。">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #e01e5a;
+      --primary-light: #ff3366;
+      --secondary: #4a9eff;
+      --accent: #ffd23f;
+      --bg-dark: #0a0a0f;
+      --bg-card: #141419;
+      --bg-card-hover: #1a1a1f;
+      --text-primary: #ffffff;
+      --text-secondary: #b8b8c8;
+      --text-muted: #6e6e7e;
+      --border: rgba(255, 255, 255, 0.1);
+      --gradient-1: linear-gradient(135deg, #e01e5a, #ff3366);
+      --gradient-2: linear-gradient(135deg, #4a9eff, #00d4ff);
+      --gradient-3: linear-gradient(135deg, #ffd23f, #ff6b9d);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 滚动公告栏 */
+    .announcement-bar {
+      background: var(--gradient-1);
+      padding: 12px 0;
+      overflow: hidden;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .announcement-content {
+      display: flex;
+      white-space: nowrap;
+      animation: scroll-left 30s linear infinite;
+    }
+
+    .announcement-text {
+      display: inline-block;
+      padding: 0 40px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* 导航栏 */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-1);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      background: var(--gradient-1);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(224, 30, 90, 0.3);
+    }
+
+    /* 英雄区 */
+    .hero {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 40px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #ffffff, #b8b8c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero .subtitle {
+      font-size: 24px;
+      color: var(--text-secondary);
+      margin-bottom: 48px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 16px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(224, 30, 90, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      background: rgba(224, 30, 90, 0.1);
+    }
+
+    /* 统计数据 */
+    .stats {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px 100px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px 30px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 900;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    /* 区块 */
+    .section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 100px 40px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-label {
+      display: inline-block;
+      background: rgba(224, 30, 90, 0.1);
+      color: var(--primary);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+
+    .section-description {
+      font-size: 20px;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* 功能卡片 */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .feature-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .feature-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-link:hover {
+      gap: 12px;
+    }
+
+    /* 工作流程 */
+    .workflow {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 50px;
+    }
+
+    .workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    .workflow-step {
+      position: relative;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .step-description {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* 订阅表单 */
+    .newsletter {
+      background: var(--gradient-1);
+      border-radius: 16px;
+      padding: 60px;
+      text-align: center;
+    }
+
+    .newsletter h3 {
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+
+    .newsletter p {
+      font-size: 18px;
+      margin-bottom: 32px;
+      opacity: 0.9;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 12px;
+      max-width: 500px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      min-width: 250px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .newsletter-input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .newsletter-button {
+      padding: 16px 32px;
+      border-radius: 8px;
+      border: none;
+      background: white;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .newsletter-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 页脚 */
+    .footer {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    /* 移动端菜单按钮 */
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .mobile-menu-btn span {
+      width: 25px;
+      height: 2px;
+      background: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 1024px) {
+      .hero h1 {
+        font-size: 56px;
+      }
+
+      .section-title {
+        font-size: 36px;
+      }
+
+      .features-grid,
+      .workflow-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .hero {
+        padding: 80px 20px;
+      }
+
+      .hero h1 {
+        font-size: 40px;
+      }
+
+      .hero .subtitle {
+        font-size: 18px;
+      }
+
+      .section {
+        padding: 60px 20px;
+      }
+
+      .section-title {
+        font-size: 32px;
+      }
+
+      .nav-container,
+      .stats,
+      .section {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .workflow {
+        padding: 30px 20px;
+      }
+
+      .newsletter {
+        padding: 40px 20px;
+      }
+
+      .newsletter h3 {
+        font-size: 28px;
+      }
+    }
+
+    /* 动画效果 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    /* 渐变背景装饰 */
+    .bg-gradient-1 {
+      position: fixed;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(224, 30, 90, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .bg-gradient-2 {
+      position: fixed;
+      bottom: -50%;
+      left: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(74, 158, 255, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <!-- 背景渐变装饰 -->
+  <div class="bg-gradient-1"></div>
+  <div class="bg-gradient-2"></div>
+
+  <!-- 滚动公告栏 -->
+  <div class="announcement-bar">
+    <div class="announcement-content">
+      <span class="announcement-text">🚀 发现下一个爆款创作者</span>
+      <span class="announcement-text">📊 AI驱动数据分析</span>
+      <span class="announcement-text">⚡ 智能API池管理</span>
+      <span class="announcement-text">🎯 精准对标监控</span>
+      <span class="announcement-text">🚀 发现下一个爆款创作者</span>
+      <span class="announcement-text">📊 AI驱动数据分析</span>
+      <span class="announcement-text">⚡ 智能API池管理</span>
+      <span class="announcement-text">🎯 精准对标监控</span>
+    </div>
+  </div>
+
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">PHANTOM RADAR</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/index.html#features">核心功能</a></li>
+        <li><a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/index.html#workflow">工作流程</a></li>
+        <li><a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/index.html#tools">工具集</a></li>
+        <li><a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/index.html#docs">文档</a></li>
+      </ul>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/API%E6%B1%A0%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7.html" class="nav-cta">开始使用</a>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 英雄区 -->
+  <section class="hero animate-in">
+    <h1>发现下一个爆款<br>创作者</h1>
+    <p class="subtitle">
+      PHANTOM RADAR 是一套专业的 YouTube 数据分析工具集，帮助你精准挖掘低粉爆款、管理对标博主、实时监控视频数据。让数据驱动你的内容策略。
+    </p>
+    <div class="hero-buttons">
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/01%20%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E6%8C%96%E6%8E%98.html" class="btn btn-primary">🎯 开始挖掘爆款</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/index.html#features" class="btn btn-secondary">了解更多 →</a>
+    </div>
+  </section>
+
+  <!-- 统计数据 -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">专业工具</div>
+      </div>
+      <div class="stat-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">API 自动切换</div>
+      </div>
+      <div class="stat-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">本地存储</div>
+      </div>
+      <div class="stat-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">实时监控</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心功能 -->
+  <section class="section" id="features">
+    <div class="section-header">
+      <span class="section-label">核心功能</span>
+      <h2 class="section-title">一站式 YouTube 数据分析解决方案</h2>
+      <p class="section-description">
+        从爆款挖掘到对标监控，从数据管理到API优化，PHANTOM RADAR 提供完整的工具链，让你在竞争中保持领先。
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card" onclick="location.href=&#39;01 低粉爆款挖掘.html&#39;" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">低粉爆款挖掘</h3>
+        <p class="feature-description">
+          通过关键词和标签智能筛选，快速发现订阅数少但视频播放量高的潜力创作者。精准定位"小而美"的内容，降低试错成本。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/01%20%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E6%8C%96%E6%8E%98.html" class="feature-link">
+          立即挖掘 →
+        </a>
+      </div>
+
+      <div class="feature-card" onclick="location.href=&#39;02 YouTube博主管理工具.html&#39;" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">博主管理系统</h3>
+        <p class="feature-description">
+          批量导入频道ID，自动去重整理。支持标签分类管理、数据导出备份，让你的对标清单井井有条，随时可查。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/02%20YouTube%E5%8D%9A%E4%B8%BB%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7.html" class="feature-link">
+          开始管理 →
+        </a>
+      </div>
+
+      <div class="feature-card" onclick="location.href=&#39;03 视频监控工具.html&#39;" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="feature-icon">📹</div>
+        <h3 class="feature-title">视频实时监控</h3>
+        <p class="feature-description">
+          批量监控对标博主最新上传，自动获取观看量、点赞数、互动率等核心指标。多维度排序，一眼看清趋势变化。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/03%20%E8%A7%86%E9%A2%91%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7.html" class="feature-link">
+          开启监控 →
+        </a>
+      </div>
+
+      <div class="feature-card" onclick="location.href=&#39;04 标签管理工具.html&#39;" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="feature-icon">🏷️</div>
+        <h3 class="feature-title">标签管理中心</h3>
+        <p class="feature-description">
+          统一管理所有标签，支持重命名、合并、批量操作。让你的数据分类更加规范，协作更加高效。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/04%20%E6%A0%87%E7%AD%BE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7.html" class="feature-link">
+          管理标签 →
+        </a>
+      </div>
+
+      <div class="feature-card" onclick="location.href=&#39;API池管理工具.html&#39;" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">智能 API 池</h3>
+        <p class="feature-description">
+          配额检测、自动切换、失败重试。内置轮询机制，当一个API配额用尽时自动切换到下一个，确保服务不中断。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/API%E6%B1%A0%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7.html" class="feature-link">
+          配置 API →
+        </a>
+      </div>
+
+      <div class="feature-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">本地优先存储</h3>
+        <p class="feature-description">
+          所有数据存储在本地浏览器 IndexedDB，不上传服务器。大容量、高性能，保护你的数据隐私和安全。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/utilities/%E5%AD%98%E5%82%A8%E7%8A%B6%E6%80%81%E6%A3%80%E6%9F%A5.html" class="feature-link">
+          检查存储 →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 工作流程 -->
+  <section class="section" id="workflow">
+    <div class="section-header">
+      <span class="section-label">工作流程</span>
+      <h2 class="section-title">四步完成从发现到监控</h2>
+      <p class="section-description">
+        简单高效的工作流程，让你快速上手，立即开始数据分析。
+      </p>
+    </div>
+
+    <div class="workflow">
+      <div class="workflow-steps">
+        <div class="workflow-step" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+          <div class="step-number">0</div>
+          <h4 class="step-title">配置 API 池</h4>
+          <p class="step-description">
+            在 API 池管理工具中添加 1-5 个 YouTube API Key，开启智能自动切换，确保服务稳定运行。
+          </p>
+        </div>
+
+        <div class="workflow-step" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+          <div class="step-number">1</div>
+          <h4 class="step-title">挖掘爆款创作者</h4>
+          <p class="step-description">
+            使用低粉爆款挖掘工具，通过关键词和标签筛选，发现潜力博主，导出优质频道列表。
+          </p>
+        </div>
+
+        <div class="workflow-step" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+          <div class="step-number">2</div>
+          <h4 class="step-title">管理对标清单</h4>
+          <p class="step-description">
+            在博主管理工具中批量导入频道，使用标签分类整理，定期刷新数据，保持清单更新。
+          </p>
+        </div>
+
+        <div class="workflow-step" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+          <div class="step-number">3</div>
+          <h4 class="step-title">监控视频数据</h4>
+          <p class="step-description">
+            使用视频监控工具批量获取最新视频，按观看量、互动率等指标排序，洞察内容趋势。
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/01%20%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E6%8C%96%E6%8E%98.html" class="btn btn-primary">立即开始 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 工具集 -->
+  <section class="section" id="tools">
+    <div class="section-header">
+      <span class="section-label">工具集</span>
+      <h2 class="section-title">完整的工具生态系统</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <h3 class="feature-title">🛠️ 诊断修复工具</h3>
+        <p class="feature-description">
+          一键诊断系统状态，快速修复常见问题，保证工具正常运行。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/utilities/%E5%BF%AB%E9%80%9F%E4%BF%AE%E5%A4%8D%E5%B7%A5%E5%85%B7.html" class="feature-link">
+          打开工具 →
+        </a>
+      </div>
+
+      <div class="feature-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <h3 class="feature-title">📦 存储状态检查</h3>
+        <p class="feature-description">
+          查看浏览器存储使用情况，管理本地数据，清理冗余内容。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/utilities/%E5%AD%98%E5%82%A8%E7%8A%B6%E6%80%81%E6%A3%80%E6%9F%A5.html" class="feature-link">
+          检查存储 →
+        </a>
+      </div>
+
+      <div class="feature-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.6s, transform 0.6s;">
+        <h3 class="feature-title">🎨 设计系统预览</h3>
+        <p class="feature-description">
+          查看 Persona5 Refined 设计系统的完整组件和样式规范。
+        </p>
+        <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/utilities/%E8%AE%BE%E8%AE%A1%E9%A2%84%E8%A7%88.html" class="feature-link">
+          查看设计 →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 订阅通知 -->
+  <section class="section">
+    <div class="newsletter">
+      <h3>保持更新</h3>
+      <p>订阅获取最新功能更新和使用技巧</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert(&#39;感谢订阅！此功能即将推出。&#39;);">
+        <input type="email" class="newsletter-input" placeholder="输入你的邮箱地址" required="">
+        <button type="submit" class="newsletter-button">订阅</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 文档链接 -->
+  <section class="section" id="docs">
+    <div class="section-header">
+      <span class="section-label">文档中心</span>
+      <h2 class="section-title">完整的文档和指南</h2>
+      <p class="section-description">
+        从快速入门到高级配置，提供全面的使用文档和故障排除指南。
+      </p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/docs/%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97.md" class="btn btn-secondary" target="_blank">📖 快速入门</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/docs/%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-API%E9%85%8D%E7%BD%AE.md" class="btn btn-secondary" target="_blank">🔧 API 配置</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/docs/%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4%E6%8C%87%E5%8D%97.md" class="btn btn-secondary" target="_blank">🛟 故障排除</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/docs/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97-API%E6%B1%A0%E7%89%88%E6%9C%AC.md" class="btn btn-secondary" target="_blank">📝 更新日志</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/docs/%E8%AE%BE%E8%AE%A1%E7%B3%BB%E7%BB%9F%E8%AF%B4%E6%98%8E.md" class="btn btn-secondary" target="_blank">🎨 设计系统</a>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/01%20%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E6%8C%96%E6%8E%98.html">爆款挖掘</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/02%20YouTube%E5%8D%9A%E4%B8%BB%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7.html">博主管理</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/03%20%E8%A7%86%E9%A2%91%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7.html">视频监控</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/04%20%E6%A0%87%E7%AD%BE%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7.html">标签管理</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/API%E6%B1%A0%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7.html">API管理</a>
+      <a href="file:///Users/gndys/Documents/%E7%BC%96%E7%A8%8B%E5%BC%80%E5%8F%91/%23%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%B2%B9%E7%AE%A1/%E4%BD%8E%E7%B2%89%E7%88%86%E6%AC%BE%E9%9B%B7%E8%BE%BE/%E5%B0%81%E8%A3%85%E7%89%88/docs/README.md" target="_blank">文档</a>
+    </div>
+    <p>© 2025 PHANTOM RADAR · Persona5 Refined Design System</p>
+    <p style="margin-top: 10px; font-size: 14px;">
+      让数据驱动你的内容策略 · 发现下一个爆款创作者
+    </p>
+  </footer>
+
+  <script>
+    // 移动端菜单切换
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    // 点击导航链接时关闭菜单
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+      });
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href.length > 1) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }
+      });
+    });
+
+    // 滚动动画
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // 为所有卡片添加滚动动画
+    document.querySelectorAll('.feature-card, .stat-card, .workflow-step').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+
+
+</body></html>

@@ -1146,8 +1146,12 @@
       apiUrl: 'https://www.pushplus.plus/api/send',
       maxVideos: 10, // 最大推送视频数量
       defaultVideos: 8, // 默认推送视频数量
-      maxContentLength: 40000, // 内容长度限制
+      maxContentLength: 12000, // PushPlus 服务端更安全的内容长度上限
       minInterval: 60000 // 最小推送间隔1分钟
+    };
+    
+    const PUSH_FEATURE_FLAGS = {
+      standaloneAIReport: true // 是否额外发送AI洞察完整推送
     };
 
     // Deepseek AI 配置
@@ -1384,9 +1388,9 @@ class PushQueue {
 // 创建全局推送队列实例
 const pushQueue = new PushQueue();
 
-// 修复后的推送函数 - 使用队列管理
-async function sendWeChatPush(title, content, useQueue = true) {
-  console.log(`📤 修复版推送函数被调用`);
+    // 修复后的推送函数 - 使用队列管理
+    async function sendWeChatPush(title, content, useQueue = true) {
+      console.log(`📤 修复版推送函数被调用`);
   console.log(`📋 标题: ${title}`);
   console.log(`📊 内容长度: ${content.length} 字符`);
   console.log(`🔄 使用队列: ${useQueue ? '是' : '否'}`);
@@ -1713,98 +1717,247 @@ ${creativeTips}
 > LLM 接口暂时不可用，以上洞察由本地算法根据当前数据自动生成，确保报告先于推送。`;
 }
     
-    // 生成推送内容 - 增加封面与AI报告排版
+    // 生成推送内容 - 自动控制内容长度
     function generatePushContent(searchTags, videoStats, topVideos, videoCount = 5, aiAnalysis = null) {
       const now = new Date().toLocaleString('zh-CN');
-      const heroVideo = topVideos && topVideos.length > 0 ? topVideos[0] : null;
-      const displayVideos = Array.isArray(topVideos) ? topVideos.slice(0, Math.min(videoCount, topVideos.length)) : [];
+      const allVideos = Array.isArray(topVideos) ? topVideos : [];
+      const heroVideo = allVideos.length > 0 ? allVideos[0] : null;
+      const LIMIT = PUSH_CONFIG?.maxContentLength || 18000;
+      const baseCount = Math.max(1, Math.min(videoCount, PUSH_CONFIG.maxVideos, allVideos.length || videoCount));
       
-      let content = `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 14px; background: #f4f6fb; border-radius: 10px;">
-          <div style="text-align: center; margin-bottom: 14px;">
-            <h3 style="margin: 0; color: #0f172a; font-size: 18px;">🎯 YouTube低粉爆款雷达报告</h3>
-            <p style="margin: 6px 0 0 0; color: #475569; font-size: 12px;">${now}</p>
-          </div>
-      `;
-      
-      if (heroVideo) {
-        const heroCover = heroVideo.thumbnail ? `<img src="${heroVideo.thumbnail}" alt="${escapeHtml(heroVideo.title)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter: brightness(0.55);">` : '';
-        content += `
-          <div style="position:relative; border-radius: 12px; overflow:hidden; margin-bottom: 12px; box-shadow: 0 8px 24px rgba(15,23,42,0.25); background: linear-gradient(135deg, #0f172a, #1d4ed8);">
-            ${heroCover}
-            <div style="position:relative; padding: 16px 18px; color: #fff;">
-              <div style="font-size: 11px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.9;">今日封面</div>
-              <div style="font-size: 16px; font-weight: 600; margin: 6px 0 10px 0;">${escapeHtml(heroVideo.title)}</div>
-              <div style="display:flex; flex-wrap:wrap; gap:12px; font-size: 12px; opacity: 0.95;">
-                <span>👁️ ${formatNumberSimple(heroVideo.viewCount)} 观看</span>
-                <span>👍 ${formatNumberSimple(heroVideo.likeCount || 0)} 互动</span>
-                <span>📺 ${escapeHtml(heroVideo.channelTitle || '热门频道')}</span>
+      const buildContent = (options) => {
+        const {
+          videoLimit,
+          includeHero,
+          tagMode,
+          includeStats,
+          includeAI,
+          condensedAI
+        } = options;
+        
+        const displayVideos = allVideos.slice(0, Math.max(1, Math.min(videoLimit, allVideos.length || 1)));
+        const showTags = Array.isArray(searchTags) && searchTags.length > 0 && tagMode !== 'none';
+        const tagList = showTags
+          ? (tagMode === 'compact' ? searchTags.slice(0, 4) : searchTags)
+          : [];
+        
+        let content = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 14px; background: #f4f6fb; border-radius: 10px;">
+            <div style="text-align: center; margin-bottom: 14px;">
+              <h3 style="margin: 0; color: #0f172a; font-size: 18px;">🎯 YouTube低粉爆款雷达报告</h3>
+              <p style="margin: 6px 0 0 0; color: #475569; font-size: 12px;">${now}</p>
+            </div>
+        `;
+        
+        if (heroVideo && includeHero) {
+          const heroCover = heroVideo.thumbnail ? `<img src="${heroVideo.thumbnail}" alt="${escapeHtml(heroVideo.title)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter: brightness(0.55);">` : '';
+          content += `
+            <div style="position:relative; border-radius: 12px; overflow:hidden; margin-bottom: 12px; box-shadow: 0 8px 24px rgba(15,23,42,0.25); background: linear-gradient(135deg, #0f172a, #1d4ed8);">
+              ${heroCover}
+              <div style="position:relative; padding: 16px 18px; color: #fff;">
+                <div style="font-size: 11px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.9;">今日封面</div>
+                <div style="font-size: 16px; font-weight: 600; margin: 6px 0 10px 0;">${escapeHtml(heroVideo.title)}</div>
+                <div style="display:flex; flex-wrap:wrap; gap:12px; font-size: 12px; opacity: 0.95;">
+                  <span>👁️ ${formatNumberSimple(heroVideo.viewCount)} 观看</span>
+                  <span>👍 ${formatNumberSimple(heroVideo.likeCount || 0)} 互动</span>
+                  <span>📺 ${escapeHtml(heroVideo.channelTitle || '热门频道')}</span>
+                </div>
               </div>
             </div>
-          </div>
-        `;
-      }
-      
-      if (searchTags && searchTags.length > 0) {
-        content += `
-          <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
-            <div style="color: #2563eb; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔍 搜索标签</div>
-            <div style="color: #0f172a; font-size: 11px; line-height: 1.5;">${searchTags.map(tag => `<span style="display:inline-block; background: rgba(37,99,235,0.08); color:#1d4ed8; padding:3px 10px; border-radius:999px; margin: 2px 4px 2px 0;">${escapeHtml(tag)}</span>`).join('')}</div>
-          </div>
-        `;
-      }
-      
-      if (videoStats) {
-        content += `
-          <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
-            <div style="color: #2563eb; font-weight: 600; font-size: 12px; margin-bottom: 6px;">📊 数据概览</div>
-            <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; font-size: 12px; color: #0f172a;">
-              <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">视频总量 <strong>${videoStats.totalVideos}</strong></div>
-              <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">频道数 <strong>${videoStats.totalChannels}</strong></div>
-              <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">平均观看 <strong>${videoStats.avgViews}</strong></div>
-              <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">爆款数量 <strong style="color:#ef4444;">${videoStats.hotVideos}</strong></div>
+          `;
+        }
+        
+        if (showTags) {
+          content += `
+            <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
+              <div style="color: #2563eb; font-weight: 600; font-size: 12px; margin-bottom: 6px;">🔍 搜索标签</div>
+              <div style="color: #0f172a; font-size: 11px; line-height: 1.5;">
+                ${tagList.map(tag => `<span style="display:inline-block; background: rgba(37,99,235,0.08); color:#1d4ed8; padding:3px 10px; border-radius:999px; margin: 2px 4px 2px 0;">${escapeHtml(tag)}</span>`).join('')}
+                ${tagMode === 'compact' && searchTags.length > tagList.length ? `<span style="display:inline-block; background:#e0f2fe; color:#0369a1; padding:3px 8px; border-radius:999px;">+${searchTags.length - tagList.length}</span>` : ''}
+              </div>
             </div>
-          </div>
-        `;
-      }
-      
-      if (displayVideos.length > 0) {
-        content += `
-          <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="color: #f97316; font-weight: 600; font-size: 12px; margin-bottom: 8px;">🔥 热门视频清单</div>
-            ${displayVideos.map((video, index) => {
-              const isHot = video.viewCount > video.subscriberCount * 2;
-              return `
-                <div style="display:flex; gap:10px; padding:8px 0; border-bottom:${index === displayVideos.length - 1 ? 'none' : '1px solid #f1f5f9'};">
-                  <div style="width:52px; height:34px; border-radius:6px; overflow:hidden; flex-shrink:0; background:#cbd5f5;">
-                    ${video.thumbnail ? `<img src="${video.thumbnail}" alt="${escapeHtml(video.title)}" style="width:100%; height:100%; object-fit:cover;">` : ''}
-                  </div>
-                  <div style="flex:1; min-width:0;">
-                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-                      <span style="background:${index === 0 ? '#f97316' : '#94a3b8'}; color:#fff; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">${index + 1}</span>
-                      <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank" style="flex:1; font-size:12px; font-weight:600; color:#0f172a; text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(video.title)}</a>
+          `;
+        }
+        
+        if (videoStats && includeStats) {
+          content += `
+            <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
+              <div style="color: #2563eb; font-weight: 600; font-size: 12px; margin-bottom: 6px;">📊 数据概览</div>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; font-size: 12px; color: #0f172a;">
+                <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">视频总量 <strong>${videoStats.totalVideos}</strong></div>
+                <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">频道数 <strong>${videoStats.totalChannels}</strong></div>
+                <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">平均观看 <strong>${videoStats.avgViews}</strong></div>
+                <div style="background:#f8fafc; padding:6px 8px; border-radius:6px;">爆款数量 <strong style="color:#ef4444;">${videoStats.hotVideos}</strong></div>
+              </div>
+            </div>
+          `;
+        }
+        
+        if (displayVideos.length > 0) {
+          content += `
+            <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+              <div style="color: #f97316; font-weight: 600; font-size: 12px; margin-bottom: 8px;">🔥 热门视频清单</div>
+              ${displayVideos.map((video, index) => {
+                const isHot = video.viewCount > (video.subscriberCount || 0) * 2;
+                return `
+                  <div style="display:flex; gap:10px; padding:8px 0; border-bottom:${index === displayVideos.length - 1 ? 'none' : '1px solid #f1f5f9'};">
+                    <div style="width:52px; height:34px; border-radius:6px; overflow:hidden; flex-shrink:0; background:#cbd5f5;">
+                      ${video.thumbnail ? `<img src="${video.thumbnail}" alt="${escapeHtml(video.title)}" style="width:100%; height:100%; object-fit:cover;">` : ''}
                     </div>
-                    <div style="font-size:11px; color:#475569;">
-                      👁️ ${formatNumberSimple(video.viewCount)}　👍 ${formatNumberSimple(video.likeCount || 0)}${isHot ? '　<span style="color:#ef4444;">🔥 爆款表现</span>' : ''}
+                    <div style="flex:1; min-width:0;">
+                      <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                        <span style="background:${index === 0 ? '#f97316' : '#94a3b8'}; color:#fff; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">${index + 1}</span>
+                        <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank" style="flex:1; font-size:12px; font-weight:600; color:#0f172a; text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(video.title)}</a>
+                      </div>
+                      <div style="font-size:11px; color:#475569;">
+                        👁️ ${formatNumberSimple(video.viewCount)}　👍 ${formatNumberSimple(video.likeCount || 0)}${isHot ? '　<span style="color:#ef4444;">🔥 爆款表现</span>' : ''}
+                      </div>
                     </div>
                   </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+        
+        if (includeAI && aiAnalysis) {
+          const aiSource = condensedAI ? summarizeAIAnalysis(aiAnalysis) : aiAnalysis;
+          const aiReport = buildAIReportSection(aiSource, displayVideos, { condensed: condensedAI });
+          if (aiReport) {
+            content += aiReport;
+          }
+        } else if (!aiAnalysis) {
+          content += `
+            <div style="background: #fef3c7; color: #92400e; padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 12px;">
+              ⚠️ AI洞察暂时不可用，本次推送基于实时数据分析生成。
+            </div>
+          `;
+        } else if (aiAnalysis && !includeAI) {
+          content += `
+            <div style="background: #ecfeff; color: #155e75; padding: 10px; border-radius: 8px; margin-top: 12px; font-size: 12px;">
+              ⚠️ 为确保推送成功，AI洞察部分已自动精简，完整内容保存在本地。
+            </div>
+          `;
+        }
+        
+        content += '</div>';
+        return content;
+      };
+      
+      const options = {
+        videoLimit: baseCount,
+        includeHero: true,
+        tagMode: 'full',
+        includeStats: true,
+        includeAI: Boolean(aiAnalysis),
+        condensedAI: false
+      };
+      
+      let content = buildContent(options);
+      const warnOverflow = (stage) => {
+        console.warn(`⚠️ 推送内容超限 (${content.length}/${LIMIT})，执行${stage}压缩策略`);
+      };
+      
+      if (content.length > LIMIT) {
+        warnOverflow('自动');
+      }
+      const adjusters = [
+        () => {
+          if (options.videoLimit > 1) {
+            options.videoLimit -= 1;
+            return true;
+          }
+          return false;
+        },
+        () => {
+          if (options.includeAI && !options.condensedAI) {
+            options.condensedAI = true;
+            return true;
+          }
+          return false;
+        },
+        () => {
+          if (options.includeHero) {
+            options.includeHero = false;
+            return true;
+          }
+          return false;
+        },
+        () => {
+          if (options.tagMode === 'full' && Array.isArray(searchTags) && searchTags.length > 4) {
+            options.tagMode = 'compact';
+            return true;
+          }
+          return false;
+        },
+        () => {
+          if (options.includeAI) {
+            options.includeAI = false;
+            return true;
+          }
+          return false;
+        },
+        () => {
+          if (options.tagMode !== 'none') {
+            options.tagMode = 'none';
+            return true;
+          }
+          return false;
+        },
+        () => {
+          if (options.includeStats) {
+            options.includeStats = false;
+            return true;
+          }
+          return false;
+        }
+      ];
+      
+      let safetyCounter = 0;
+      while (content.length > LIMIT && safetyCounter < 10) {
+        safetyCounter += 1;
+        let adjusted = false;
+        for (const adjust of adjusters) {
+          if (content.length <= LIMIT) break;
+          if (adjust()) {
+            content = buildContent(options);
+            adjusted = true;
+            break;
+          }
+        }
+        if (!adjusted) {
+          break;
+        }
       }
       
-      const aiReport = buildAIReportSection(aiAnalysis, displayVideos);
-      if (aiReport) {
-        content += aiReport;
+      if (content.length > LIMIT) {
+        warnOverflow('极限');
+        const fallbackOptions = {
+          videoLimit: Math.min(3, baseCount),
+          includeHero: false,
+          tagMode: 'compact',
+          includeStats: false,
+          includeAI: false,
+          condensedAI: true
+        };
+        content = buildContent(fallbackOptions);
       }
       
-      content += '</div>';
+      if (content.length > LIMIT) {
+        console.warn(`⚠️ 内容仍超过限制 (${content.length}/${LIMIT})，启用紧急精简模板`);
+        content = buildEmergencyPushContent(
+          searchTags,
+          videoStats,
+          allVideos.slice(0, Math.min(3, allVideos.length)),
+          aiAnalysis ? summarizeAIAnalysis(aiAnalysis, 6) : null
+        );
+      }
+      
       return content;
     }
 
-    function buildAIReportSection(aiAnalysis, topVideos) {
+    function buildAIReportSection(aiAnalysis, topVideos, options = {}) {
+      const { condensed = false } = options || {};
       const insights = formatAITrendText(aiAnalysis);
       const hasVideos = Array.isArray(topVideos) && topVideos.length > 0;
       if (!insights && !hasVideos) {
@@ -1824,9 +1977,32 @@ ${creativeTips}
       
       return `
         <div style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #d8b4fe; margin-top: 12px;">
-          <div style="color: #7c3aed; font-weight: 600; font-size: 13px; margin-bottom: 6px;">🤖 AI 热门内容 & 趋势洞察</div>
+          <div style="color: #7c3aed; font-weight: 600; font-size: 13px; margin-bottom: 6px;">🤖 AI 热门内容 & 趋势洞察${condensed ? '（精简版）' : ''}</div>
           ${highlightCards}
           ${insights ? `<div style="margin-top:10px; font-size:12px; color:#4338ca;">📈 趋势速览</div><div style="font-size:11px; color:#312e81; line-height:1.6; margin-top:4px;">${insights}</div>` : ''}
+        </div>
+      `;
+    }
+    
+    function buildStandaloneAIReportContent(tags, aiAnalysis) {
+      const now = new Date().toLocaleString('zh-CN');
+      const safeTags = Array.isArray(tags) && tags.length > 0 ? tags : ['AI趋势'];
+      const tagChips = safeTags.map(tag => `<span style="display:inline-block;background:#ede9fe;color:#5b21b6;padding:3px 10px;border-radius:999px;margin:2px 4px 0 0;font-size:11px;">#${escapeHtml(tag)}</span>`).join('');
+      const analysisHtml = formatAIAnalysisHtml(aiAnalysis);
+      return `
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:14px;background:#ffffff;border-radius:12px;border:1px solid #e0e7ff;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div>
+              <div style="font-size:15px;font-weight:600;color:#312e81;">🤖 AI洞察深度报告</div>
+              <div style="font-size:11px;color:#94a3b8;">${now}</div>
+            </div>
+            <div style="font-size:11px;color:#7c3aed;background:#f5f3ff;padding:4px 10px;border-radius:999px;">完整版</div>
+          </div>
+          <div style="margin-top:10px;">${tagChips}</div>
+          <div style="margin-top:12px;font-size:12px;color:#312e81;line-height:1.6;">
+            ${analysisHtml}
+          </div>
+          <div style="margin-top:10px;font-size:10px;color:#94a3b8;">本推送仅包含AI洞察报告，配合主报告使用效果更佳</div>
         </div>
       `;
     }
@@ -1873,6 +2049,57 @@ ${creativeTips}
       
       closeList();
       return html;
+    }
+
+    function formatAIAnalysisHtml(aiAnalysis) {
+      return formatAITrendText(aiAnalysis);
+    }
+    
+    function summarizeAIAnalysis(aiAnalysis, maxLines = 12) {
+      if (!aiAnalysis || typeof aiAnalysis !== 'string') {
+        return '';
+      }
+      const cleanLines = aiAnalysis.replace(/\r/g, '').split('\n').map(line => line.trim()).filter(Boolean);
+      if (cleanLines.length <= maxLines) {
+        return aiAnalysis;
+      }
+      return cleanLines.slice(0, maxLines).join('\n') + '\n...';
+    }
+    
+    function buildEmergencyPushContent(searchTags, videoStats, videos, aiSummary) {
+      const now = new Date().toLocaleString('zh-CN');
+      const safeTags = Array.isArray(searchTags) && searchTags.length > 0
+        ? searchTags.slice(0, 3).map(tag => `#${escapeHtml(tag)}`).join(' · ')
+        : '热门趋势';
+      const statsLine = videoStats
+        ? `${videoStats.totalVideos || '-'}个视频 | ${videoStats.totalChannels || '-'}个频道 | 爆款 ${videoStats.hotVideos || 0}`
+        : '实时数据模式';
+      const clips = Array.isArray(videos) && videos.length > 0 ? videos.slice(0, 3) : [];
+      
+      const videoItems = clips.length > 0
+        ? `<ol style="margin:6px 0 0 18px; padding:0; font-size:11px; color:#111827;">
+            ${clips.map((video, idx) => `<li>${escapeHtml(video.title || `热门视频 ${idx + 1}`)} · 👁️ ${formatNumberSimple(video.viewCount || 0)} · 👍 ${formatNumberSimple(video.likeCount || 0)}</li>`).join('')}
+          </ol>`
+        : '<p style="font-size:11px; color:#6b7280;">暂无可用视频数据</p>';
+      
+      const aiBlock = aiSummary
+        ? `<div style="margin-top:10px; font-size:11px; color:#312e81; line-height:1.5;">${formatAIAnalysisHtml(aiSummary)}</div>`
+        : '';
+      
+      return `
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:12px;background:#ffffff;border-radius:10px;border:1px solid #e2e8f0;">
+          <div style="font-size:14px;font-weight:600;color:#0f172a;">🎯 YouTube低粉爆款紧急简报</div>
+          <div style="font-size:11px;color:#6b7280;">${now}</div>
+          <div style="margin-top:8px;font-size:12px;color:#2563eb;">${safeTags}</div>
+          <div style="font-size:11px;color:#111827;margin-top:6px;">${statsLine}</div>
+          <div style="margin-top:6px;">
+            <div style="font-size:12px;color:#f97316;font-weight:600;">🔥 重点视频</div>
+            ${videoItems}
+          </div>
+          ${aiBlock}
+          <div style="margin-top:10px;font-size:10px;color:#94a3b8;">内容已自动精简以确保推送成功</div>
+        </div>
+      `;
     }
     
     // 简化的数字格式化
@@ -1941,6 +2168,14 @@ ${creativeTips}
         console.log(`📱 准备发送微信推送，共 ${allVideos.length} 个视频，筛选后 ${filteredVideos.length} 个`);
         
         const searchTags = currentSearchTags.length > 0 ? currentSearchTags : ['未知标签'];
+        const aiTags = searchTags.slice(0, Math.min(4, searchTags.length));
+        const pushTitleTags = searchTags.slice(0, Math.min(4, searchTags.length));
+        const pushTitleTagText = pushTitleTags.length > 0
+          ? (searchTags.length > pushTitleTags.length
+              ? `${pushTitleTags.join(', ')} +${searchTags.length - pushTitleTags.length}`
+              : pushTitleTags.join(', '))
+          : '热门趋势';
+        const contentTags = searchTags.slice(0, Math.min(8, searchTags.length));
         const videoStats = {
           totalVideos: filteredVideos.length,
           totalChannels: new Set(filteredVideos.map(v => v.channelId)).size,
@@ -1960,13 +2195,14 @@ ${creativeTips}
         
         // 如果高质量视频不足10个，则使用实际数量
         const actualPushCount = Math.min(PUSH_TOP_VIDEOS, topVideos.length);
+        const aiInputVideos = topVideos.slice(0, actualPushCount);
         
         // 生成AI分析和预测（带超时机制）
         console.log('🤖 开始生成AI洞察分析...');
         let aiAnalysis = null;
         
         // 创建带超时的AI分析Promise（延长超时时间 - 30秒超时）
-        const aiAnalysisPromise = generateAIAnalysisWithTimeout(topVideos, searchTags, videoStats, 30000); // 30秒超时
+        const aiAnalysisPromise = generateAIAnalysisWithTimeout(aiInputVideos, aiTags, videoStats, 30000); // 30秒超时
         
         try {
           aiAnalysis = await aiAnalysisPromise;
@@ -1994,14 +2230,14 @@ ${creativeTips}
         if (aiAnalysis) {
           // AI分析成功，发送AI增强版推送
           console.log('✅ AI分析成功，发送AI增强版推送');
-          pushTitle = `🤖 AI洞察：YouTube爆款分析 - ${searchTags.join(', ')}`;
-          pushContent = generatePushContent(searchTags, videoStats, topVideos, actualPushCount, aiAnalysis);
+          pushTitle = `🤖 AI洞察：YouTube爆款分析 - ${pushTitleTagText}`;
+          pushContent = generatePushContent(contentTags, videoStats, topVideos, actualPushCount, aiAnalysis);
           pushMessage = '✅ AI洞察报告已发送到微信';
         } else {
           // AI分析失败或超时，发送基础推送
           console.log('⚠️ AI分析失败或超时，发送基础推送');
-          pushTitle = `YouTube爆款分析完成 - ${searchTags.join(', ')}`;
-          pushContent = generatePushContent(searchTags, videoStats, topVideos, actualPushCount, null);
+          pushTitle = `YouTube爆款分析完成 - ${pushTitleTagText}`;
+          pushContent = generatePushContent(contentTags, videoStats, topVideos, actualPushCount, null);
           pushMessage = '✅ 分析结果已发送到微信（AI洞察不可用）';
         }
         
@@ -2010,10 +2246,17 @@ ${creativeTips}
         const pushPromise = sendWeChatPush(pushTitle, pushContent);
         
         // 等待推送结果，增强错误处理和用户反馈
-        pushPromise.then(success => {
+        pushPromise.then(async success => {
           if (success) {
             console.log('✅ 推送发送成功');
             showMessage(pushMessage, 'success', 5000);
+            if (aiAnalysis && PUSH_FEATURE_FLAGS.standaloneAIReport) {
+              try {
+                await sendStandaloneAIReport(aiTags, aiAnalysis);
+              } catch (followError) {
+                console.warn('⚠️ AI洞察独立推送异常:', followError);
+              }
+            }
           } else {
             console.log('❌ 推送发送失败');
             // 这里的错误提示需要区分是AI分析失败导致的推送内容降级，还是推送本身失败
@@ -2035,6 +2278,23 @@ ${creativeTips}
         });
       } else {
         console.log(`⚠️ 没有视频数据，跳过微信推送`);
+      }
+    }
+    
+    async function sendStandaloneAIReport(tags, aiAnalysis) {
+      if (!PUSH_FEATURE_FLAGS.standaloneAIReport || !aiAnalysis) {
+        return;
+      }
+      const safeTags = Array.isArray(tags) && tags.length > 0 ? tags : ['AI趋势'];
+      const tagText = safeTags.slice(0, 4).join(', ') + (tags && tags.length > 4 ? ` +${tags.length - 4}` : '');
+      const title = `🤖 AI洞察报告（完整版）- ${tagText || 'AI趋势'}`;
+      const content = buildStandaloneAIReportContent(safeTags, aiAnalysis);
+      console.log('📤 发送AI洞察独立推送...');
+      const success = await sendWeChatPush(title, content);
+      if (success) {
+        console.log('✅ AI洞察独立推送成功');
+      } else {
+        console.warn('⚠️ AI洞察独立推送失败');
       }
     }
     

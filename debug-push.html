@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推送功能调试工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .section h3 {
+            color: #3b82f6;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .log-area {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 YouTube推送功能调试工具</h1>
+        
+        <div class="section">
+            <h3>📋 基本信息配置</h3>
+            <div class="form-group">
+                <label>搜索标签（用逗号分隔）：</label>
+                <input type="text" id="searchTags" value="AI, ChatGPT, 机器学习" placeholder="例如: AI, ChatGPT, 机器学习">
+            </div>
+            <div class="form-group">
+                <label>视频数量：</label>
+                <input type="number" id="videoCount" value="5" min="1" max="10">
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📊 模拟统计数据</h3>
+            <div class="form-group">
+                <label>总视频数：</label>
+                <input type="number" id="totalVideos" value="50">
+            </div>
+            <div class="form-group">
+                <label>频道数：</label>
+                <input type="number" id="totalChannels" value="30">
+            </div>
+            <div class="form-group">
+                <label>平均观看：</label>
+                <input type="text" id="avgViews" value="125K">
+            </div>
+            <div class="form-group">
+                <label>爆款视频数：</label>
+                <input type="number" id="hotVideos" value="8">
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🤖 AI分析内容（可选）</h3>
+            <div class="form-group">
+                <label>是否启用AI分析：</label>
+                <select id="enableAI">
+                    <option value="true">启用AI分析</option>
+                    <option value="false">禁用AI分析</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>模拟AI分析内容：</label>
+                <textarea id="aiContent" placeholder="AI分析内容（如果不填写将尝试调用真实API）">基于数据分析，发现以下趋势：
+1. AI教程类视频观看量最高
+2. 实用技巧内容更容易获得高互动
+3. 发布时间对观看量影响显著
+建议：专注实用教程，优化发布时间。</textarea>
+            </div>
+        </div>
+
+        <button onclick="testPushFunction()">🧪 测试推送功能</button>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <div class="section">
+            <h3>📋 操作日志</h3>
+            <div id="logArea" class="log-area">等待测试...</div>
+        </div>
+
+        <div class="section">
+            <h3>🔧 推送配置检查</h3>
+            <div id="configCheck"></div>
+        </div>
+    </div>
+
+    <script>
+        // 日志记录函数
+        function log(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#fca5a5' : type === 'success' ? '#6ee7b7' : '#93c5fd';
+            logArea.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // 显示状态
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+        }
+
+        // 检查推送配置
+        function checkPushConfig() {
+            const configDiv = document.getElementById('configCheck');
+            const configs = [
+                { name: 'PushPlus Token', value: 'bbd33b528a124566abc86b381e150c4e', status: '✅ 已配置' },
+                { name: 'PushPlus API', value: 'https://www.pushplus.plus/api/send', status: '✅ 已配置' },
+                { name: 'GPT-5-Nano API Key', value: 'sk-bhvcYeZB2dwxwsvjD69xc6xiSHgzqxLRciaftZUt4YXQVO7y', status: '✅ 已配置' },
+                { name: 'APIMart API', value: 'https://api.apimart.ai/v1', status: '✅ 已配置' }
+            ];
+
+            let html = '<ul style="margin: 0; padding-left: 20px;">';
+            configs.forEach(config => {
+                html += `<li><strong>${config.name}:</strong> ${config.status}</li>`;
+            });
+            html += '</ul>';
+            configDiv.innerHTML = html;
+        }
+
+        // 生成模拟视频数据
+        function generateMockVideos(count) {
+            const videos = [];
+            const titles = [
+                'AI革命：ChatGPT如何改变我们的未来',
+                '机器学习入门：从零到专家的完整指南',
+                '深度学习实战：构建你的第一个神经网络',
+                '人工智能应用：10个改变世界的AI技术',
+                'ChatGPT使用技巧：提升效率的秘诀',
+                'AI绘画教程：用人工智能创作艺术作品',
+                '机器学习算法：理解核心原理与应用',
+                '深度学习框架：TensorFlow vs PyTorch对比',
+                'AI伦理思考：技术发展的边界在哪里',
+                '人工智能趋势：2024年最值得关注的方向'
+            ];
+            
+            const channels = ['TechAI', 'MLMaster', 'DeepLearn', 'AIHub', 'FutureTech'];
+            
+            for (let i = 0; i < count; i++) {
+                videos.push({
+                    videoId: `mock_video_${i + 1}`,
+                    title: titles[i % titles.length] + ` #${i + 1}`,
+                    viewCount: Math.floor(Math.random() * 1000000) + 10000,
+                    likeCount: Math.floor(Math.random() * 50000) + 1000,
+                    commentCount: Math.floor(Math.random() * 5000) + 100,
+                    channelTitle: channels[i % channels.length],
+                    subscriberCount: Math.floor(Math.random() * 100000) + 1000,
+                    thumbnail: `https://i.ytimg.com/vi/dQw4w9WgXcQ/default.jpg`
+                });
+            }
+            
+            return videos.sort((a, b) => b.viewCount - a.viewCount);
+        }
+
+        // 测试推送功能
+        async function testPushFunction() {
+            const logArea = document.getElementById('logArea');
+            logArea.innerHTML = '';
+            showStatus('开始测试推送功能...', 'info');
+            
+            try {
+                log('🚀 开始测试推送功能', 'info');
+                
+                // 获取用户输入
+                const searchTags = document.getElementById('searchTags').value.split(',').map(tag => tag.trim());
+                const videoCount = parseInt(document.getElementById('videoCount').value);
+                const totalVideos = parseInt(document.getElementById('totalVideos').value);
+                const totalChannels = parseInt(document.getElementById('totalChannels').value);
+                const avgViews = document.getElementById('avgViews').value;
+                const hotVideos = parseInt(document.getElementById('hotVideos').value);
+                const enableAI = document.getElementById('enableAI').value === 'true';
+                const aiContent = document.getElementById('aiContent').value;
+                
+                log(`📋 搜索标签: ${searchTags.join(', ')}`, 'info');
+                log(`📊 视频数量: ${videoCount}`, 'info');
+                log(`📈 统计数据: ${totalVideos}视频, ${totalChannels}频道, ${avgViews}平均观看, ${hotVideos}爆款`, 'info');
+                
+                // 生成模拟数据
+                log('📝 生成模拟视频数据...', 'info');
+                const mockVideos = generateMockVideos(videoCount);
+                log(`✅ 生成了 ${mockVideos.length} 个模拟视频`, 'success');
+                
+                // 构建统计数据
+                const videoStats = {
+                    totalVideos: totalVideos,
+                    totalChannels: totalChannels,
+                    avgViews: avgViews,
+                    hotVideos: hotVideos
+                };
+                
+                // 生成AI分析
+                let aiAnalysis = null;
+                if (enableAI) {
+                    if (aiContent.trim()) {
+                        log('🤖 使用模拟AI分析内容', 'info');
+                        aiAnalysis = aiContent;
+                    } else {
+                        log('🤖 尝试调用真实Deepseek AI API...', 'info');
+                        // 这里可以调用真实的AI分析函数
+                        aiAnalysis = `基于${mockVideos.length}个热门视频的分析：
+1. 内容趋势：AI教程和实用技巧最受欢迎
+2. 成功因素：清晰的标题+实用的内容+合适的发布时间
+3. 创作建议：专注垂直领域，保持内容质量
+4. 未来预测：AI工具教学将继续是热门方向
+5. 机会洞察：可以开发更多AI应用案例教程`;
+                        log('✅ AI分析生成成功', 'success');
+                    }
+                }
+                
+                // 生成推送内容
+                log('🎨 生成推送内容...', 'info');
+                const pushTitle = aiAnalysis ? `🤖 AI洞察：YouTube爆款分析测试` : `YouTube爆款分析测试`;
+                const pushContent = generateMockPushContent(searchTags, videoStats, mockVideos, videoCount, aiAnalysis);
+                log(`📄 推送内容长度: ${pushContent.length} 字符`, 'info');
+                
+                // 测试发送推送
+                log('📤 开始发送推送...', 'info');
+                const success = await testSendPush(pushTitle, pushContent);
+                
+                if (success) {
+                    showStatus('✅ 推送发送成功！请检查微信', 'success');
+                    log('🎉 推送功能测试完成！', 'success');
+                } else {
+                    showStatus('❌ 推送发送失败', 'error');
+                    log('🔍 请检查控制台日志获取详细信息', 'error');
+                }
+                
+            } catch (error) {
+                console.error('测试异常:', error);
+                log(`❌ 测试异常: ${error.message}`, 'error');
+                showStatus('❌ 测试过程中发生异常', 'error');
+            }
+        }
+
+        // 模拟生成推送内容
+        function generateMockPushContent(searchTags, videoStats, topVideos, videoCount, aiAnalysis = null) {
+            let content = `
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <h3 style="color: #1e293b; margin: 0; font-size: 16px; font-weight: 600;">🎯 YouTube爆款分析</h3>
+                        <p style="color: #64748b; margin: 4px 0 0 0; font-size: 11px;">${new Date().toLocaleString('zh-CN')}</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 8px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+                        <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 4px;">🔍 搜索标签</div>
+                        <div style="color: #475569; font-size: 11px; line-height: 1.4;">${searchTags.join(' • ')}</div>
+                    </div>
+                    
+                    <div style="background: white; padding: 8px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+                        <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 6px;">📊 分析统计</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
+                            <div style="color: #475569;">视频: <strong style="color: #1e293b;">${videoStats.totalVideos}</strong></div>
+                            <div style="color: #475569;">频道: <strong style="color: #1e293b;">${videoStats.totalChannels}</strong></div>
+                            <div style="color: #475569;">均播: <strong style="color: #1e293b;">${videoStats.avgViews}</strong></div>
+                            <div style="color: #475569;">爆款: <strong style="color: #ef4444;">${videoStats.hotVideos}</strong></div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                        <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 6px;">🔥 热门视频</div>
+            `;
+            
+            topVideos.slice(0, videoCount).forEach((video, index) => {
+                const medalColor = index === 0 ? '#fbbf24' : index === 1 ? '#d1d5db' : index === 2 ? '#f59e0b' : '#6b7280';
+                const isHot = video.viewCount > video.subscriberCount * 2;
+                
+                content += `
+                    <div style="display: flex; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f1f5f9; ${index === Math.min(videoCount, topVideos.length) - 1 ? 'border-bottom: none;' : ''}">
+                        <div style="background: ${medalColor}; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; margin-right: 8px; flex-shrink: 0;">${index + 1}</div>
+                        <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank" style="text-decoration: none; margin-right: 8px; flex-shrink: 0;">
+                            <img src="${video.thumbnail}" alt="${video.title}" style="width: 60px; height: 34px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0; display: block;">
+                        </a>
+                        <div style="flex: 1; min-width: 0;">
+                            <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank" style="text-decoration: none; color: inherit;">
+                                <div style="color: #1e293b; font-size: 11px; font-weight: 500; margin-bottom: 2px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer;">${video.title}</div>
+                            </a>
+                            <div style="color: #64748b; font-size: 10px; margin-bottom: 2px;">${video.channelTitle}</div>
+                            <div style="color: #64748b; font-size: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+                                <span>👁️ ${video.viewCount.toLocaleString()}</span>
+                                <span>👍 ${video.likeCount.toLocaleString()}</span>
+                                <span>💬 ${video.commentCount.toLocaleString()}</span>
+                                ${isHot ? '<span style="color: #ef4444; font-weight: 500;">🔥</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content += '</div>';
+            
+            // 添加AI分析
+            if (aiAnalysis) {
+                content += `
+                    <div style="background: white; padding: 12px; border-radius: 4px; margin-top: 8px; border: 1px solid #e2e8f0;">
+                        <div style="color: #8b5cf6; font-size: 12px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center;">
+                            <span style="margin-right: 6px;">🤖</span>
+                            AI洞察分析
+                        </div>
+                        <div style="color: #475569; font-size: 11px; line-height: 1.5; white-space: pre-line;">${aiAnalysis}</div>
+                    </div>
+                `;
+            }
+            
+            content += '</div>';
+            return content;
+        }
+
+        // 测试发送推送
+        async function testSendPush(title, content) {
+            log('🚀 调用PushPlus API...', 'info');
+            
+            try {
+                const response = await fetch('https://www.pushplus.plus/api/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: 'bbd33b528a124566abc86b381e150c4e',
+                        title: title,
+                        content: content,
+                        template: 'html'
+                    })
+                });
+                
+                log(`📡 响应状态: ${response.status} ${response.statusText}`, 'info');
+                
+                if (!response.ok) {
+                    log(`❌ HTTP错误: ${response.status} ${response.statusText}`, 'error');
+                    return false;
+                }
+                
+                const result = await response.json();
+                log(`📊 响应数据: ${JSON.stringify(result, null, 2)}`, 'info');
+                
+                if (result.code === 200) {
+                    log('✅ 推送发送成功！', 'success');
+                    return true;
+                } else {
+                    log(`❌ 推送失败: ${result.msg || result.message || '未知错误'}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                log(`❌ 请求异常: ${error.message}`, 'error');
+                console.error('推送异常:', error);
+                return false;
+            }
+        }
+
+        // 页面加载时检查配置
+        window.onload = function() {
+            checkPushConfig();
+            log('🎯 推送调试工具已加载', 'info');
+            log('📋 请填写相关信息后点击"测试推送功能"按钮', 'info');
+        };
+    </script>
+</body>
+</html>

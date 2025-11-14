@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>推送功能调试</title>
+</head>
+<body>
+  <h1>推送功能调试测试</h1>
+  <button onclick="testPush()">测试推送</button>
+  <button onclick="testSimplePush()">测试简单推送</button>
+  <button onclick="testAIPush()">测试AI推送</button>
+  <div id="log" style="margin-top: 20px; padding: 10px; background: #f0f0f0; font-family: monospace; white-space: pre-line;"></div>
+
+  <script>
+    const PUSH_CONFIG = {
+      token: 'bbd33b528a124566abc86b381e150c4e',
+      apiUrl: 'https://www.pushplus.plus/api/send'
+    };
+
+    function log(message) {
+      const logDiv = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      logDiv.textContent += `[${timestamp}] ${message}\n`;
+      console.log(message);
+    }
+
+    // 测试简单推送
+    async function testSimplePush() {
+      log('🧪 开始测试简单推送...');
+      
+      try {
+        const response = await fetch(PUSH_CONFIG.apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            token: PUSH_CONFIG.token,
+            title: '简单推送测试',
+            content: '这是一个简单的测试内容',
+            template: 'html'
+          })
+        });
+        
+        const result = await response.json();
+        log(`✅ 简单推送结果: ${JSON.stringify(result)}`);
+        
+      } catch (error) {
+        log(`❌ 简单推送错误: ${error.message}`);
+      }
+    }
+
+    // 测试完整推送
+    async function testPush() {
+      log('🧪 开始测试完整推送...');
+      
+      const content = generatePushContent();
+      log(`📊 内容长度: ${content.length} 字符`);
+      
+      try {
+        const response = await fetch(PUSH_CONFIG.apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            token: PUSH_CONFIG.token,
+            title: '🤖 AI洞察：YouTube爆款分析测试',
+            content: content,
+            template: 'html'
+          })
+        });
+        
+        const result = await response.json();
+        log(`✅ 完整推送结果: ${JSON.stringify(result)}`);
+        
+      } catch (error) {
+        log(`❌ 完整推送错误: ${error.message}`);
+        log(`🔍 错误详情: ${error.stack}`);
+      }
+    }
+
+    // 测试带AI的推送
+    async function testAIPush() {
+      log('🧪 开始测试AI推送...');
+      
+      const aiAnalysis = `📈 内容趋势：AI工具类视频持续火热，教程和实用技巧最受欢迎
+
+🔑 成功要素：实用性+易懂性+时效性
+
+💡 创作建议：
+• 制作"AI工具使用教程"系列
+• 分享"ChatGPT工作流优化"技巧
+
+🎯 机会洞察：AI+行业应用（如AI+设计、AI+写作）存在蓝海机会`;
+
+      const content = generatePushContent(aiAnalysis);
+      log(`📊 AI内容长度: ${content.length} 字符`);
+      
+      try {
+        const response = await fetch(PUSH_CONFIG.apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            token: PUSH_CONFIG.token,
+            title: '🤖 AI洞察：YouTube爆款分析 - AI, ChatGPT, 人工智能',
+            content: content,
+            template: 'html'
+          })
+        });
+        
+        const result = await response.json();
+        log(`✅ AI推送结果: ${JSON.stringify(result)}`);
+        
+      } catch (error) {
+        log(`❌ AI推送错误: ${error.message}`);
+      }
+    }
+
+    // 生成推送内容
+    function generatePushContent(aiAnalysis = null) {
+      const now = new Date().toLocaleString('zh-CN');
+      let content = `
+        <div style="background: #f8fafc; padding: 12px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+          <div style="text-align: center; margin-bottom: 12px;">
+            <h3 style="color: #1e293b; margin: 0; font-size: 16px; font-weight: 600;">🎯 YouTube爆款分析</h3>
+            <p style="color: #64748b; margin: 4px 0 0 0; font-size: 11px;">${now}</p>
+          </div>
+          <div style="background: white; padding: 8px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+            <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 4px;">🔍 搜索标签</div>
+            <div style="color: #475569; font-size: 11px; line-height: 1.4;">AI • ChatGPT • 人工智能</div>
+          </div>
+          <div style="background: white; padding: 8px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+            <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 6px;">📊 分析统计</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
+              <div style="color: #475569;">视频: <strong style="color: #1e293b;">25</strong></div>
+              <div style="color: #475569;">频道: <strong style="color: #1e293b;">18</strong></div>
+              <div style="color: #475569;">均播: <strong style="color: #1e293b;">128K</strong></div>
+              <div style="color: #475569;">爆款: <strong style="color: #ef4444;">8</strong></div>
+            </div>
+          </div>
+      `;
+      
+      if (aiAnalysis) {
+        content += `
+          <div style="background: white; padding: 12px; border-radius: 4px; margin-top: 8px; border: 1px solid #e2e8f0;">
+            <div style="color: #8b5cf6; font-size: 12px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center;">
+              <span style="margin-right: 6px;">🤖</span>
+              AI洞察分析
+            </div>
+            <div style="color: #475569; font-size: 11px; line-height: 1.5; white-space: pre-line;">${aiAnalysis}</div>
+          </div>
+        `;
+      }
+      
+      content += '</div>';
+      return content;
+    }
+
+    // 页面加载完成后自动测试
+    window.onload = function() {
+      log('📱 页面加载完成，准备开始测试...');
+      setTimeout(() => {
+        testSimplePush();
+      }, 1000);
+    };
+  </script>
+</body>
+</html>

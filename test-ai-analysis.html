@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI分析功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .test-section { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 6px; }
+        .result { margin-top: 15px; padding: 10px; background: #e8f5e8; border-radius: 4px; white-space: pre-wrap; font-family: monospace; font-size: 12px; }
+        .error { background: #ffeaea; color: #d32f2f; }
+        button { padding: 10px 20px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1565c0; }
+        .loading { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI分析功能测试</h1>
+        <p>测试Deepseek AI分析功能是否正常工作</p>
+        
+        <div class="test-section">
+            <h3>测试AI分析功能</h3>
+            <button onclick="testAIAnalysis()">开始测试</button>
+            <div id="testResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>测试推送功能</h3>
+            <button onclick="testPushFunction()">测试推送</button>
+            <div id="pushResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Deepseek AI 配置
+        const DEEPSEEK_CONFIG = {
+            apiUrl: 'https://api.apimart.ai/v1',
+            model: 'gpt-5-nano',
+            apiKey: 'sk-bhvcYeZB2dwxwsvjD69xc6xiSHgzqxLRciaftZUt4YXQVO7y'
+        };
+
+        // PushPlus 配置
+        const PUSH_CONFIG = {
+            token: 'bbd33b528a124566abc86b381e150c4e',
+            apiUrl: 'https://www.pushplus.plus/api/send'
+        };
+
+        // 模拟视频数据
+        const mockVideoData = [
+            {
+                title: "AI Revolution 2024 - 人工智能如何改变世界",
+                viewCount: 1500000,
+                likeCount: 45000,
+                commentCount: 3200,
+                channelTitle: "TechVision",
+                subscriberCount: 250000,
+                isHot: true
+            },
+            {
+                title: "ChatGPT vs Claude - 最强AI助手对比测试",
+                viewCount: 890000,
+                likeCount: 28000,
+                commentCount: 2100,
+                channelTitle: "AI实验室",
+                subscriberCount: 180000,
+                isHot: true
+            },
+            {
+                title: "机器学习入门教程 - 从零开始学AI",
+                viewCount: 650000,
+                likeCount: 19000,
+                commentCount: 1500,
+                channelTitle: "编程学院",
+                subscriberCount: 320000,
+                isHot: false
+            }
+        ];
+
+        // 测试AI分析功能（带超时机制）
+        async function testAIAnalysis() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading">正在生成AI分析（15秒超时）...</div>';
+
+            try {
+                const searchTags = ['AI', '人工智能', '机器学习'];
+                const videoStats = {
+                    totalVideos: 25,
+                    totalChannels: 18,
+                    avgViews: '580K',
+                    hotVideos: 8
+                };
+
+                // 使用带超时的AI分析
+                const aiAnalysis = await generateAIAnalysisWithTimeout(mockVideoData, searchTags, videoStats, 15000);
+                
+                if (aiAnalysis) {
+                    resultDiv.innerHTML = `✅ AI分析生成成功！\n\n${aiAnalysis}`;
+                } else {
+                    resultDiv.innerHTML = '⚠️ AI分析生成失败或超时，但这不影响正常使用';
+                    resultDiv.style.background = '#fff3cd';
+                    resultDiv.style.color = '#856404';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ 测试失败: ${error.message}`;
+                resultDiv.classList.add('error');
+                console.error('AI分析测试失败:', error);
+            }
+        }
+
+        // 测试推送功能（异步推送策略）
+        async function testPushFunction() {
+            const resultDiv = document.getElementById('pushResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading">正在实施异步推送策略...</div>';
+
+            try {
+                const searchTags = ['AI测试'];
+                const videoStats = {
+                    totalVideos: 3,
+                    totalChannels: 3,
+                    avgViews: '1M',
+                    hotVideos: 2
+                };
+
+                // 立即发送基础推送（不含AI分析）
+                const baseTitle = `推送功能测试`;
+                const baseContent = generateTestPushContent(searchTags, videoStats, mockVideoData, null);
+                
+                console.log('📤 发送基础推送（不含AI分析）...');
+                const basePushPromise = sendWeChatPush(baseTitle, baseContent);
+                
+                // 同时启动AI分析（带超时）
+                const aiAnalysisPromise = generateAIAnalysisWithTimeout(mockVideoData, searchTags, videoStats, 10000);
+                
+                // 等待基础推送结果
+                const baseSuccess = await basePushPromise;
+                
+                if (baseSuccess) {
+                    resultDiv.innerHTML = '✅ 基础推送发送成功！正在生成AI分析...';
+                    
+                    // 等待AI分析结果
+                    const aiAnalysis = await aiAnalysisPromise;
+                    
+                    if (aiAnalysis) {
+                        console.log('📤 AI分析成功，发送增强版推送...');
+                        const enhancedTitle = `🤖 AI测试：推送功能测试`;
+                        const enhancedContent = generateTestPushContent(searchTags, videoStats, mockVideoData, aiAnalysis);
+                        
+                        // 异步发送增强版推送，不等待结果
+                        sendWeChatPush(enhancedTitle, enhancedContent).then(success => {
+                            if (success) {
+                                console.log('✅ AI增强版推送发送成功');
+                                resultDiv.innerHTML = '✅ 基础推送和AI洞察报告都已发送成功！请检查微信';
+                            } else {
+                                console.log('⚠️ AI增强版推送发送失败');
+                                resultDiv.innerHTML = '✅ 基础推送发送成功，AI洞察报告发送失败';
+                            }
+                        });
+                    } else {
+                        console.log('⚠️ AI分析超时或失败');
+                        resultDiv.innerHTML = '✅ 基础推送发送成功（AI分析超时）';
+                    }
+                } else {
+                    resultDiv.innerHTML = '❌ 基础推送发送失败';
+                    resultDiv.classList.add('error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ 推送测试失败: ${error.message}`;
+                resultDiv.classList.add('error');
+                console.error('推送测试失败:', error);
+            }
+        }
+
+        // 生成测试推送内容
+        function generateTestPushContent(searchTags, videoStats, topVideos, aiAnalysis = null) {
+            const now = new Date().toLocaleString('zh-CN');
+            let content = `
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <h3 style="color: #1e293b; margin: 0; font-size: 16px; font-weight: 600;">🎯 测试推送</h3>
+                        <p style="color: #64748b; margin: 4px 0 0 0; font-size: 11px;">${now}</p>
+                    </div>
+            `;
+
+            // 搜索标签信息
+            if (searchTags && searchTags.length > 0) {
+                content += `
+                    <div style="background: white; padding: 8px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+                        <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 4px;">🔍 搜索标签</div>
+                        <div style="color: #475569; font-size: 11px; line-height: 1.4;">${searchTags.join(' • ')}</div>
+                    </div>
+                `;
+            }
+
+            // 统计信息
+            if (videoStats) {
+                content += `
+                    <div style="background: white; padding: 8px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+                        <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 6px;">📊 分析统计</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px;">
+                            <div style="color: #475569;">视频: <strong style="color: #1e293b;">${videoStats.totalVideos}</strong></div>
+                            <div style="color: #475569;">频道: <strong style="color: #1e293b;">${videoStats.totalChannels}</strong></div>
+                            <div style="color: #475569;">均播: <strong style="color: #1e293b;">${videoStats.avgViews}</strong></div>
+                            <div style="color: #475569;">爆款: <strong style="color: #ef4444;">${videoStats.hotVideos}</strong></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 热门视频
+            if (topVideos && topVideos.length > 0) {
+                content += `
+                    <div style="background: white; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                        <div style="color: #3b82f6; font-size: 12px; font-weight: 600; margin-bottom: 6px;">🔥 热门视频</div>
+                `;
+
+                topVideos.slice(0, 3).forEach((video, index) => {
+                    const isHot = video.viewCount > video.subscriberCount * 2;
+                    const medalColor = index === 0 ? '#fbbf24' : index === 1 ? '#d1d5db' : '#f59e0b';
+
+                    content += `
+                        <div style="display: flex; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f1f5f9; ${index === Math.min(3, topVideos.length) - 1 ? 'border-bottom: none;' : ''}">
+                            <div style="background: ${medalColor}; color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; margin-right: 8px; flex-shrink: 0;">${index + 1}</div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="color: #1e293b; font-size: 11px; font-weight: 500; margin-bottom: 2px; line-height: 1.3;">${video.title}</div>
+                                <div style="color: #64748b; font-size: 10px; margin-bottom: 2px;">${video.channelTitle}</div>
+                                <div style="color: #64748b; font-size: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+                                    <span>👁️ ${formatNumber(video.viewCount)}</span>
+                                    <span>👍 ${formatNumber(video.likeCount)}</span>
+                                    <span>💬 ${formatNumber(video.commentCount)}</span>
+                                    ${isHot ? '<span style="color: #ef4444; font-weight: 500;">🔥</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                content += '</div>';
+            }
+
+            // 添加AI分析和预测
+            if (aiAnalysis) {
+                content += `
+                    <div style="background: white; padding: 12px; border-radius: 4px; margin-top: 8px; border: 1px solid #e2e8f0;">
+                        <div style="color: #8b5cf6; font-size: 12px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center;">
+                            <span style="margin-right: 6px;">🤖</span>
+                            AI洞察分析
+                        </div>
+                        <div style="color: #475569; font-size: 11px; line-height: 1.5; white-space: pre-line;">${aiAnalysis}</div>
+                    </div>
+                `;
+            }
+
+            content += '</div>';
+            return content;
+        }
+
+        // 发送微信推送消息
+        async function sendWeChatPush(title, content) {
+            const PUSHPLUS_TOKEN = PUSH_CONFIG.token;
+            const PUSHPLUS_API = PUSH_CONFIG.apiUrl;
+
+            console.log(`📤 开始发送微信推送...`);
+            console.log(`📋 推送标题: ${title}`);
+            console.log(`📊 内容长度: ${content.length} 字符`);
+
+            try {
+                const requestBody = {
+                    token: PUSHPLUS_TOKEN,
+                    title: title,
+                    content: content,
+                    template: 'html'
+                };
+
+                const response = await fetch(PUSHPLUS_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    console.error(`❌ HTTP 错误: ${response.status} ${response.statusText}`);
+                    return false;
+                }
+
+                const result = await response.json();
+
+                if (result.code === 200) {
+                    console.log('✅ 微信推送发送成功');
+                    return true;
+                } else {
+                    console.error('❌ 微信推送发送失败:', result.msg || result.message || '未知错误');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ 微信推送请求失败:', error);
+                return false;
+            }
+        }
+
+        // 生成AI分析（复制自主文件）
+        async function generateAIAnalysis(topVideos, searchTags, videoStats) {
+            console.log('🤖 开始生成AI分析和预测...');
+            
+            try {
+                // 准备AI分析的提示词
+                const videoData = topVideos.map((video, index) => ({
+                    rank: index + 1,
+                    title: video.title,
+                    viewCount: video.viewCount,
+                    likeCount: video.likeCount,
+                    commentCount: video.commentCount,
+                    channelTitle: video.channelTitle,
+                    subscriberCount: video.subscriberCount,
+                    isHot: video.viewCount > video.subscriberCount * 2
+                }));
+
+                const systemPrompt = `你是一个专业的YouTube内容分析专家，擅长分析视频数据和趋势预测。请基于提供的数据给出深入的分析和预测。`;
+
+                const userPrompt = `请分析以下YouTube视频数据，并提供专业的洞察和预测：
+
+搜索标签：${searchTags.join(', ')}
+
+整体统计：
+- 总视频数：${videoStats.totalVideos}
+- 频道数：${videoStats.totalChannels}
+- 平均观看：${videoStats.avgViews}
+- 爆款视频：${videoStats.hotVideos}
+
+观看数最高的10个视频数据：
+${JSON.stringify(videoData, null, 2)}
+
+请提供以下分析：
+1. 内容趋势分析（这些视频有什么共同特点）
+2. 成功因素总结（为什么这些视频能获得高观看）
+3. 创作建议（基于这些数据，给内容创作者的建议）
+4. 未来预测（预测这类内容的发展趋势）
+5. 机会洞察（指出潜在的内容机会）
+
+请用中文回答，语言要专业但易懂，结构清晰，每条建议都要具体实用。`;
+
+                const requestBody = {
+                    model: DEEPSEEK_CONFIG.model,
+                    messages: [
+                        {
+                            role: "system",
+                            content: systemPrompt
+                        },
+                        {
+                            role: "user",
+                            content: userPrompt
+                        }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 2000
+                };
+
+                console.log('🚀 调用Deepseek AI API...');
+                
+                const response = await fetch(`${DEEPSEEK_CONFIG.apiUrl}/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${DEEPSEEK_CONFIG.apiKey}`
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    console.error(`❌ Deepseek API 错误: ${response.status} ${response.statusText}`);
+                    return null;
+                }
+
+                const result = await response.json();
+                
+                if (result.choices && result.choices[0] && result.choices[0].message) {
+                    const aiAnalysis = result.choices[0].message.content;
+                    console.log('✅ AI分析生成成功');
+                    console.log('📝 AI分析内容:', aiAnalysis);
+                    return aiAnalysis;
+                } else {
+                    console.error('❌ AI分析结果格式错误');
+                    return null;
+                }
+            } catch (error) {
+                console.error('❌ AI分析生成失败:', error);
+                return null;
+            }
+        }
+
+        // 数字格式化
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+    </script>
+</body>
+</html>
